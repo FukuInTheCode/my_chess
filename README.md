@@ -1,0 +1,1 @@
+Little python project for me to learn some chess opening :)
