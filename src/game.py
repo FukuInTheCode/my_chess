@@ -14,15 +14,18 @@ class Game():
         self.engine = engine
         
         self.board = [[None for i in range(self.BASESIZE[0])] for _ in range(self.BASESIZE[1])]
+        
+        self.pieces = []
 
         self.setupbase_pieces()
     
     def setupbase_pieces(self) -> None:
         for i in range(8):
-            self.board[1][i] = Pawn(self, i, 1, True)
-            
-        for i in range(8):
-            self.board[6][i] = Pawn(self, i, 6, False)
+            self.pieces.append(Pawn(self, i, 1, True))
+            self.pieces.append(Pawn(self, i, 6, False))
+        
+        for piece in self.pieces:
+            self.board[piece.y][piece.x] = piece
     
     def update(self) -> None:
         pass
@@ -35,5 +38,6 @@ class Game():
         for i in range(self.BASESIZE[0]):
             for sq in range(self.BASESIZE[1]):
                 pyg.draw.rect(self.engine.screen, (self.BLACK_SQUARE if sq%2 == i%2 else self.WHITE_SQUARE), (square_size_w*sq, tmp_h-(i+1)*square_size_h, square_size_w, square_size_h))
-                if self.board[i][sq] is not None:
-                    self.board[i][sq].draw(square_size_w, square_size_h, tmp_h)
+
+        for piece in self.pieces:
+            piece.draw(square_size_w, square_size_h, tmp_h)
