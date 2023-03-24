@@ -36,7 +36,7 @@ class Engine():
                 cursor_y = int(cursor_y)
                 if self.game.clicked is not None and self.game.clicked.team == self.game.is_turn:
                     if (cursor_x, cursor_y) in self.game.clicked.get_moves(True):
-                        self.game.clicked.set_pos(cursor_x, cursor_y)
+                        self.game.clicked.set_pos(cursor_x - self.game.clicked.x, cursor_y - self.game.clicked.y)
                         if self.game.board[cursor_y][cursor_x] is not None:
                             self.game.pieces.remove(self.game.board[cursor_y][cursor_x])
                         self.game.is_turn = not self.game.is_turn

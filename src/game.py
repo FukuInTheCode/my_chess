@@ -29,9 +29,9 @@ class Game():
     
     def setupbase_pieces(self) -> None:
 
-        self.pieces.append(Queen(self, 2, 2, False))
-        
-        self.pieces.append(Pawn(self, 2, 5, True))
+        for i in range(1, 9):
+            self.pieces.append(Pawn(self, i, 2, True))
+            self.pieces.append(Pawn(self, i, 7, False))
         
 
         self.update()
@@ -47,8 +47,6 @@ class Game():
             piece.setPossibleMoves()
     
     def draw(self) -> None:
-        
-        print(self.calc_points())
         
         for i in range(self.BASESIZE[0]):
             for sq in range(self.BASESIZE[1]):

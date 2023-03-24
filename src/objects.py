@@ -11,29 +11,13 @@ class Pawn():
         self.setPossibleMoves()
         self.setImage()
         self.point = 1
+        self.last_move = (self.x, self.y)
             
             
     def setPossibleMoves(self) -> None:
         self.moves = []
         if self.team: # case if white piece
             
-            if self.y != 7:
-            
-                if self.game.board[self.y + 1][self.x] is None:
-                    self.moves.append((0, 1))
-                    if self.y == 1 and self.game.board[self.y + 2][self.x] is None:
-                        self.moves.append((0, 2))
-
-                if self.x != 7:
-                    if self.game.board[self.y + 1][self.x + 1] is not None and not self.game.board[self.y + 1][self.x + 1].team:
-                        self.moves.append((1, 1))
-                        
-                if self.x != 0:
-                    if self.game.board[self.y + 1][self.x - 1] is not None and not self.game.board[self.y + 1][self.x - 1].team:
-                        self.moves.append((-1, 1))
-            
-        else: # case if black piece
-                        
             if self.y != 0:
             
                 if self.game.board[self.y - 1][self.x] is None:
@@ -42,12 +26,30 @@ class Pawn():
                         self.moves.append((0, -2))
 
                 if self.x != 7:
-                    if self.game.board[self.y - 1][self.x + 1] is not None and self.game.board[self.y - 1][self.x + 1].team:
+                    if self.game.board[self.y - 1][self.x + 1] is not None and not self.game.board[self.y - 1][self.x + 1].team:
                         self.moves.append((1, -1))
                         
                 if self.x != 0:
-                    if self.game.board[self.y - 1][self.x - 1] is not None and self.game.board[self.y - 1][self.x - 1].team:
-                        self.moves.append((-1, -1))
+                    if self.game.board[self.y - 1][self.x - 1] is not None and not self.game.board[self.y - 1][self.x - 1].team:
+                        self.moves.append((-1,-1))
+
+            
+        else: # case if black piece
+                        
+            if self.y != 7: 
+            
+                if self.game.board[self.y + 1][self.x] is None:
+                    self.moves.append((0, 1))
+                    if self.y == 1 and self.game.board[self.y + 2][self.x] is None:
+                        self.moves.append((0, 2))
+
+                if self.x != 7:
+                    if self.game.board[self.y + 1][self.x + 1] is not None and self.game.board[self.y + 1][self.x + 1].team:
+                        self.moves.append((1, 1))
+                        
+                if self.x != 0:
+                    if self.game.board[self.y + 1][self.x - 1] is not None and self.game.board[self.y + 1][self.x - 1].team:
+                        self.moves.append((-1, 1))
                         
                         
     def get_moves(self, full: bool = False) -> tuple:
@@ -68,9 +70,10 @@ class Pawn():
         else:
             self.image = pyg.image.load('assets/blackpiece/blackPawn.png')
             
-    def set_pos(self, x, y):
-        self.x = x
-        self.y = y
+    def set_pos(self, dx, dy):
+        self.last_move = (dx, dy)
+        self.x += dx
+        self.y += dy
         self.setPossibleMoves()
         self.draw()
         
