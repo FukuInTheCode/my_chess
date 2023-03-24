@@ -27,7 +27,7 @@ class Game():
     
     def setupbase_pieces(self) -> None:
 
-        self.pieces.append(Queen(self, 2, 2, True))
+        self.pieces.append(Queen(self, 2, 2, False))
         
         self.pieces.append(Pawn(self, 2, 5, True))
         
@@ -44,11 +44,11 @@ class Game():
         
         for i in range(self.BASESIZE[0]):
             for sq in range(self.BASESIZE[1]):
-                pyg.draw.rect(self.engine.screen, (self.BLACK_SQUARE if sq%2 == i%2 else self.WHITE_SQUARE), (self.square_size_w*sq, self.tmp_h-(i+1)*self.square_size_h, self.square_size_w, self.square_size_h))
+                pyg.draw.rect(self.engine.screen, (self.BLACK_SQUARE if sq%2 == i%2 else self.WHITE_SQUARE), (self.square_size_w*i, self.tmp_h-(sq+1)*self.square_size_h, self.square_size_w, self.square_size_h))
 
         for piece in self.pieces:
-            piece.draw(self.square_size_w, self.square_size_h, self.tmp_h)
+            piece.draw()
             
         if self.hovered is not None:
             for dx, dy in self.hovered.get_moves():
-                pyg.draw.circle(self.engine.screen, (0, 0, 0), ((self.hovered.x + dx + 1/2)*self.square_size_w, (self.hovered.y + dy + 1/2)*self.square_size_h), min(self.square_size_w, self.square_size_h)//8)
+                pyg.draw.circle(self.engine.screen, (100, 100, 100), ((self.hovered.x + dx + 1/2)*self.square_size_w, (self.hovered.y + dy + 1/2)*self.square_size_h), min(self.square_size_w, self.square_size_h)//16)

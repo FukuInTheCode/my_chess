@@ -54,9 +54,9 @@ class Pawn():
         self.setPossibleMoves()
         return self.moves
     
-    def draw(self, sq_w, sq_h, h) -> None:
-        self.image = pyg.transform.scale(self.image, (sq_w, sq_h)).convert_alpha()
-        self.game.engine.screen.blit(self.image, (self.x*sq_w, h - (1+self._y)*sq_h))
+    def draw(self) -> None:
+        self.image = pyg.transform.scale(self.image, (self.game.square_size_w, self.game.square_size_h)).convert_alpha()
+        self.game.engine.screen.blit(self.image, (self.x*self.game.square_size_w, self.game.tmp_h - (1+self._y)*self.game.square_size_h))
         
         
     def setImage(self) -> None:
@@ -73,77 +73,20 @@ class Queen(Pawn):
         
     def setPossibleMoves(self) -> None:
         self.moves = []
-        dx = 0
-        dy = 0
-        
-        dx += 1
-        while 0 <= self.x + dx < self.game.BASESIZE[0] and 0<=self.y + dy<self.game.BASESIZE[1] and (self.game.board[self.y + dy][self.x + dx] is None or self.game.board[self.y + dy][self.x + dx].team != self.team):
-            self.moves.append((dx, dy))
-            dx += 1
-        
-        dx = 0
-        dy = 0
-        
-        dx -= 1
-        while 0 <= self.x + dx < self.game.BASESIZE[0] and 0<=self.y + dy<self.game.BASESIZE[1] and (self.game.board[self.y + dy][self.x + dx] is None or self.game.board[self.y + dy][self.x + dx].team != self.team):
-            self.moves.append((dx, dy))
-            dx -= 1
             
-        dx = 0
-        dy = 0
-        
-        dy += 1
-        while 0 <= self.x + dx < self.game.BASESIZE[0] and 0<=self.y + dy<self.game.BASESIZE[1] and (self.game.board[self.y + dy][self.x + dx] is None or self.game.board[self.y + dy][self.x + dx].team != self.team):
-            self.moves.append((dx, dy))
-            dy += 1
+        ds = [(0, 1), (0, -1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, -1), (-1, 1)]
+        for dx, dy in ds:
+            tdx = 0
+            tdy = 0
             
-        dx = 0
-        dy = 0
-        
-        dy -= 1
-        while 0 <= self.x + dx < self.game.BASESIZE[0] and 0<=self.y + dy<self.game.BASESIZE[1] and (self.game.board[self.y + dy][self.x + dx] is None or self.game.board[self.y + dy][self.x + dx].team != self.team):
-            self.moves.append((dx, dy))
-            dy -= 1
-            
-        dx = 0
-        dy = 0
-        
-        dy += 1
-        dx += 1
-        while 0 <= self.x + dx < self.game.BASESIZE[0] and 0<=self.y + dy<self.game.BASESIZE[1] and (self.game.board[self.y + dy][self.x + dx] is None or self.game.board[self.y + dy][self.x + dx].team != self.team):
-            self.moves.append((dx, dy))
-            dx += 1
-            dy += 1
-            
-        dx = 0
-        dy = 0
-        
-        dy -= 1
-        dx -= 1
-        while 0 <= self.x + dx < self.game.BASESIZE[0] and 0<=self.y + dy<self.game.BASESIZE[1] and (self.game.board[self.y + dy][self.x + dx] is None or self.game.board[self.y + dy][self.x + dx].team != self.team):
-            self.moves.append((dx, dy))
-            dx -= 1
-            dy -= 1
-            
-        dx = 0
-        dy = 0
-        
-        dx += 1
-        dy -= 1
-        while 0 <= self.x + dx < self.game.BASESIZE[0] and 0<=self.y + dy<self.game.BASESIZE[1] and (self.game.board[self.y + dy][self.x + dx] is None or self.game.board[self.y + dy][self.x + dx].team != self.team):
-            self.moves.append((dx, dy))
-            dx += 1
-            dy -= 1
-            
-        dx = 0
-        dy = 0
-        
-        dx -= 1
-        dy += 1
-        while 0 <= self.x + dx < self.game.BASESIZE[0] and 0<=self.y + dy<self.game.BASESIZE[1] and (self.game.board[self.y + dy][self.x + dx] is None or self.game.board[self.y + dy][self.x + dx].team != self.team):
-            self.moves.append((dx, dy))
-            dx -= 1
-            dy += 1
+            tdx += dx
+            tdy += dy
+            while 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and (self.game.board[self.y + tdy][self.x + tdx] is None or self.game.board[self.y + tdy][self.x + tdx].team != self.team):
+                self.moves.append((tdx, tdy))
+                if (self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].team != self.team):
+                    break
+                tdx += dx
+                tdy += dy
             
     
     def setImage(self) -> None:
