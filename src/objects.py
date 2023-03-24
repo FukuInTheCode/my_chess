@@ -6,11 +6,11 @@ class Pawn():
     def __init__(self, game, x: int, y:int, t: bool) -> None:
         self.game = game
         self.team = t # True is white and False is black
-        self.x = x
-        self.y = self.game.BASESIZE[1] - (y+1)
-        self._y = y
+        self.x = x - 1
+        self.y = self.game.BASESIZE[1] - y
         self.setPossibleMoves()
         self.setImage()
+        self.point = 1
             
             
     def setPossibleMoves(self) -> None:
@@ -50,13 +50,16 @@ class Pawn():
                         self.moves.append((-1, -1))
                         
                         
-    def get_moves(self) -> tuple:
+    def get_moves(self, full: bool = False) -> tuple:
         self.setPossibleMoves()
+        if full:
+            return [(self.x + dx, self.y + dy) for dx, dy in self.moves]
+        
         return self.moves
     
     def draw(self) -> None:
         self.image = pyg.transform.scale(self.image, (self.game.square_size_w, self.game.square_size_h)).convert_alpha()
-        self.game.engine.screen.blit(self.image, (self.x*self.game.square_size_w, self.game.tmp_h - (1+self._y)*self.game.square_size_h))
+        self.game.engine.screen.blit(self.image, (self.x*self.game.square_size_w, self.y*self.game.square_size_h))
         
         
     def setImage(self) -> None:
@@ -64,12 +67,19 @@ class Pawn():
             self.image = pyg.image.load('assets\whitepiece\whitePawn.png')
         else:
             self.image = pyg.image.load('assets/blackpiece/blackPawn.png')
+            
+    def set_pos(self, x, y):
+        self.x = x
+        self.y = y
+        self.setPossibleMoves()
+        self.draw()
         
         
 class Queen(Pawn):
     
     def __init__(self, game, x: int, y: int, t: bool) -> None:
         super().__init__(game, x, y, t)
+        self.point = 9
         
     def setPossibleMoves(self) -> None:
         self.moves = []
