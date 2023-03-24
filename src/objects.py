@@ -15,7 +15,7 @@ class Pawn():
         self.last_move = (self.x, self.y)
             
             
-    def setPossibleMoves(self) -> None:
+    def setPossibleMoves(self, wK: bool = False) -> None:
         self.moves = []
         if self.team: # case if white piece
             
@@ -30,17 +30,17 @@ class Pawn():
                     if self.game.board[self.y - 1][self.x + 1] is not None and not self.game.board[self.y - 1][self.x + 1].team:
                         self.moves.append((1, -1))
                         
+                    if self.y == 3 and self.game.board[self.y][self.x + 1] is not None and self.game.board[self.y][self.x + 1].name == 'P' and self.game.board[self.y][self.x + 1].last_move == (0, 2):
+                        self.moves.append((1, -1))
+                        
                 if self.x != 0:
                     if self.game.board[self.y - 1][self.x - 1] is not None and not self.game.board[self.y - 1][self.x - 1].team:
                         self.moves.append((-1,-1))
+                        
+                    if self.y == 3 and self.game.board[self.y][self.x - 1] is not None and self.game.board[self.y][self.x - 1].name == 'P' and self.game.board[self.y][self.x - 1].last_move == (0, 2):
+                        self.moves.append((-1, -1))
 
-                if self.y == 3 and self.game.board[self.y][self.x + 1] is not None and self.game.board[self.y][self.x + 1].name == 'P' and self.game.board[self.y][self.x + 1].last_move == (0, 2):
-                    self.moves.append((1, -1))
-                    
-                if self.y == 3 and self.game.board[self.y][self.x - 1] is not None and self.game.board[self.y][self.x - 1].name == 'P' and self.game.board[self.y][self.x - 1].last_move == (0, 2):
-                    self.moves.append((-1, -1))
 
-            
         else: # case if black piece
                         
             if self.y != self.game.BASESIZE[1]-1: 
@@ -54,21 +54,23 @@ class Pawn():
                     if self.game.board[self.y + 1][self.x + 1] is not None and self.game.board[self.y + 1][self.x + 1].team:
                         self.moves.append((1, 1))
                         
+                    if self.y == self.game.BASESIZE[1]-4 and self.game.board[self.y][self.x + 1] is not None and self.game.board[self.y][self.x + 1].name == 'P' and self.game.board[self.y][self.x + 1].last_move == (0, -2):
+                        self.moves.append((1, 1))
+                    
+                        
                 if self.x != 0:
                     if self.game.board[self.y + 1][self.x - 1] is not None and self.game.board[self.y + 1][self.x - 1].team:
                         self.moves.append((-1, 1))
                         
-                if self.y == self.game.BASESIZE[1]-4 and self.game.board[self.y][self.x + 1] is not None and self.game.board[self.y][self.x + 1].name == 'P' and self.game.board[self.y][self.x + 1].last_move == (0, -2):
-                    self.moves.append((1, 1))
-                    
-                if self.y == self.game.BASESIZE[1]-4 and self.game.board[self.y][self.x - 1] is not None and self.game.board[self.y][self.x - 1].name == 'P' and self.game.board[self.y][self.x - 1].last_move == (0, -2):
-                    self.moves.append((-1, 1))
+                    if self.y == self.game.BASESIZE[1]-4 and self.game.board[self.y][self.x - 1] is not None and self.game.board[self.y][self.x - 1].name == 'P' and self.game.board[self.y][self.x - 1].last_move == (0, -2):
+                        self.moves.append((-1, 1))
                         
-                
+
+    def get_attacked_squares(self):
+        return ([(self.x-1, self.y-1), (self.x+1, self.y-1)] if self.team else [(self.x-1, self.y+1), (self.x+1, self.y+1)]) if self.name == 'P' else self.get_moves(True, True)
                         
-                        
-    def get_moves(self, full: bool = False) -> tuple:
-        self.setPossibleMoves()
+    def get_moves(self, full: bool = False, wK: bool = False) -> tuple:
+        self.setPossibleMoves(wK)
         if full:
             return [(self.x + dx, self.y + dy) for dx, dy in self.moves]
         
@@ -101,7 +103,7 @@ class Queen(Pawn):
         self.point = 9
         self.name = 'Q'
         
-    def setPossibleMoves(self) -> None:
+    def setPossibleMoves(self, wK: bool = False) -> None:
         self.moves = []
             
         ds = [(0, 1), (0, -1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, -1), (-1, 1)]
@@ -113,11 +115,14 @@ class Queen(Pawn):
             tdy += dy
             while 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and (self.game.board[self.y + tdy][self.x + tdx] is None or self.game.board[self.y + tdy][self.x + tdx].team != self.team):
                 self.moves.append((tdx, tdy))
+                if self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].name == 'K' and self.game.board[self.y + tdy][self.x + tdx].team != self.team and wK:
+                    tdx += dx
+                    tdy += dy
+                    continue
                 if (self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].team != self.team):
                     break
                 tdx += dx
                 tdy += dy
-            
     
     def setImage(self) -> None:
         if self.team:
@@ -132,7 +137,7 @@ class Rook(Pawn):
         self.point = 5
         self.name = 'R'
         
-    def setPossibleMoves(self) -> None:
+    def setPossibleMoves(self, wK: bool = False) -> None:
         self.moves = []
         
         ds = [(0, 1), (0, -1), (1, 0), (-1, 0)]
@@ -144,6 +149,10 @@ class Rook(Pawn):
             tdy += dy
             while 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and (self.game.board[self.y + tdy][self.x + tdx] is None or self.game.board[self.y + tdy][self.x + tdx].team != self.team):
                 self.moves.append((tdx, tdy))
+                if self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].name == 'K' and self.game.board[self.y + tdy][self.x + tdx].team != self.team and wK:
+                    tdx += dx
+                    tdy += dy
+                    continue
                 if (self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].team != self.team):
                     break
                 tdx += dx
@@ -162,7 +171,7 @@ class Bishop(Pawn):
         self.point = 3
         self.name = 'B'
         
-    def setPossibleMoves(self) -> None:
+    def setPossibleMoves(self, wK: bool = False) -> None:
         self.moves = []
         
         ds = [(1, 1), (1, -1), (-1, -1), (-1, 1)]
@@ -174,6 +183,10 @@ class Bishop(Pawn):
             tdy += dy
             while 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and (self.game.board[self.y + tdy][self.x + tdx] is None or self.game.board[self.y + tdy][self.x + tdx].team != self.team):
                 self.moves.append((tdx, tdy))
+                if self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].name == 'K' and self.game.board[self.y + tdy][self.x + tdx].team != self.team and wK:
+                    tdx += dx
+                    tdy += dy
+                    continue
                 if (self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].team != self.team):
                     break
                 tdx += dx
@@ -192,7 +205,7 @@ class Knight(Pawn):
         self.point = 3
         self.name = 'N'
         
-    def setPossibleMoves(self) -> None:
+    def setPossibleMoves(self, wK: bool = False) -> None:
         self.moves = []
         
         ds = [(-1, -2), (1, -2), (2, -1), (2, 1)]
@@ -210,3 +223,38 @@ class Knight(Pawn):
             self.image = pyg.image.load('assets\whitepiece\whiteKnight.png')
         else:
             self.image = pyg.image.load('assets/blackpiece/blackKnight.png')
+            
+            
+class King(Pawn):
+    def __init__(self, game, x: int, y: int, t: bool) -> None:
+        super().__init__(game, x, y, t)
+        self.point = 0
+        self.name = 'K'
+        
+    def setPossibleMoves(self, wK: bool = False) -> None:
+        self.moves = []
+        
+        ds = [(0, 1), (0, -1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, -1), (-1, 1)]
+        
+        for dx, dy in ds:
+            
+            if not (0<=self.x+dx<self.game.BASESIZE[0] and 0<=self.y+dy<self.game.BASESIZE[1]):
+                continue
+            
+            if self.game.board[self.y + dy][self.x + dx] is not None and self.game.board[self.y + dy][self.x + dx].team != self.team or self.game.board[self.y + dy][self.x + dx] is None:
+                tmp = True
+                for piece in self.game.pieces:
+                    if piece.team == self.team or piece is self:
+                        continue
+                    for move in piece.get_attacked_squares():
+                        if move == (self.x + dx, self.y + dy):
+                            tmp = False
+                            break
+                if tmp:
+                    self.moves.append((dx, dy))
+                
+    def setImage(self) -> None:
+        if self.team:
+            self.image = pyg.image.load('assets\whitepiece\whiteKing.png')
+        else:
+            self.image = pyg.image.load('assets/blackpiece/blackKing.png')

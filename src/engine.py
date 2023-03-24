@@ -33,6 +33,7 @@ class Engine():
                 cursor_y //= self.game.square_size_h
                 cursor_x = int(cursor_x)
                 cursor_y = int(cursor_y)
+                print(cursor_x, cursor_y)
                 if self.game.clicked is not None and self.game.clicked.team == self.game.is_turn:
                     if (cursor_x, cursor_y) in self.game.clicked.get_moves(True):
                         dx = cursor_x - self.game.clicked.x
@@ -40,7 +41,7 @@ class Engine():
                         if self.game.board[cursor_y][cursor_x] is not None:
                             self.game.pieces.remove(self.game.board[cursor_y][cursor_x])
                             
-                        elif self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x] is not None and self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x].name == 'P' and self.game.clicked.name == 'P' and  self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x].last_move == (0, (2 if self.game.clicked.team else -2)) and dx != 0:
+                        elif self.game.clicked.name == 'P' and self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x] is not None and self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x].name == 'P' and self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x].last_move == (0, (2 if self.game.clicked.team else -2)) and dx != 0:
                             self.game.pieces.remove(self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x])
                             
                         
