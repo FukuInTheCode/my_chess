@@ -1,6 +1,6 @@
 import math
 import pygame as pyg
-from objects import Pawn, Queen
+from objects import Pawn, Queen, Rook, Bishop, Knight
 
 class Game():
     
@@ -32,6 +32,11 @@ class Game():
         for i in range(1, 9):
             self.pieces.append(Pawn(self, i, 2, True))
             self.pieces.append(Pawn(self, i, 7, False))
+            
+        
+        self.pieces.append(Rook(self, 4, 3, False))
+        self.pieces.append(Bishop(self, 5, 3, False))
+        self.pieces.append(Knight(self, 6, 3, True))
         
 
         self.update()

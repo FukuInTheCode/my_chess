@@ -4,6 +4,7 @@ import os
 
 class Pawn():
     def __init__(self, game, x: int, y:int, t: bool) -> None:
+        self.name = 'P'
         self.game = game
         self.team = t # True is white and False is black
         self.x = x - 1
@@ -25,7 +26,7 @@ class Pawn():
                     if self.y == 6 and self.game.board[self.y - 2][self.x] is None:
                         self.moves.append((0, -2))
 
-                if self.x != 7:
+                if self.x != self.game.BASESIZE[0] - 1:
                     if self.game.board[self.y - 1][self.x + 1] is not None and not self.game.board[self.y - 1][self.x + 1].team:
                         self.moves.append((1, -1))
                         
@@ -33,23 +34,37 @@ class Pawn():
                     if self.game.board[self.y - 1][self.x - 1] is not None and not self.game.board[self.y - 1][self.x - 1].team:
                         self.moves.append((-1,-1))
 
+                if self.y == 3 and self.game.board[self.y][self.x + 1] is not None and self.game.board[self.y][self.x + 1].name == 'P' and self.game.board[self.y][self.x + 1].last_move == (0, 2):
+                    self.moves.append((1, -1))
+                    
+                if self.y == 3 and self.game.board[self.y][self.x - 1] is not None and self.game.board[self.y][self.x - 1].name == 'P' and self.game.board[self.y][self.x - 1].last_move == (0, 2):
+                    self.moves.append((-1, -1))
+
             
         else: # case if black piece
                         
-            if self.y != 7: 
+            if self.y != self.game.BASESIZE[1]-1: 
             
                 if self.game.board[self.y + 1][self.x] is None:
                     self.moves.append((0, 1))
                     if self.y == 1 and self.game.board[self.y + 2][self.x] is None:
                         self.moves.append((0, 2))
 
-                if self.x != 7:
+                if self.x != self.game.BASESIZE[0] - 1:
                     if self.game.board[self.y + 1][self.x + 1] is not None and self.game.board[self.y + 1][self.x + 1].team:
                         self.moves.append((1, 1))
                         
                 if self.x != 0:
                     if self.game.board[self.y + 1][self.x - 1] is not None and self.game.board[self.y + 1][self.x - 1].team:
                         self.moves.append((-1, 1))
+                        
+                if self.y == self.game.BASESIZE[1]-4 and self.game.board[self.y][self.x + 1] is not None and self.game.board[self.y][self.x + 1].name == 'P' and self.game.board[self.y][self.x + 1].last_move == (0, -2):
+                    self.moves.append((1, 1))
+                    
+                if self.y == self.game.BASESIZE[1]-4 and self.game.board[self.y][self.x - 1] is not None and self.game.board[self.y][self.x - 1].name == 'P' and self.game.board[self.y][self.x - 1].last_move == (0, -2):
+                    self.moves.append((-1, 1))
+                        
+                
                         
                         
     def get_moves(self, full: bool = False) -> tuple:
@@ -72,6 +87,7 @@ class Pawn():
             
     def set_pos(self, dx, dy):
         self.last_move = (dx, dy)
+        print(self.last_move)
         self.x += dx
         self.y += dy
         self.setPossibleMoves()
@@ -83,6 +99,7 @@ class Queen(Pawn):
     def __init__(self, game, x: int, y: int, t: bool) -> None:
         super().__init__(game, x, y, t)
         self.point = 9
+        self.name = 'Q'
         
     def setPossibleMoves(self) -> None:
         self.moves = []
@@ -107,3 +124,89 @@ class Queen(Pawn):
             self.image = pyg.image.load('assets\whitepiece\whiteQueen.png')
         else:
             self.image = pyg.image.load('assets/blackpiece/blackQueen.png')
+            
+            
+class Rook(Pawn):
+    def __init__(self, game, x: int, y: int, t: bool) -> None:
+        super().__init__(game, x, y, t)
+        self.point = 5
+        self.name = 'R'
+        
+    def setPossibleMoves(self) -> None:
+        self.moves = []
+        
+        ds = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        for dx, dy in ds:
+            tdx = 0
+            tdy = 0
+            
+            tdx += dx
+            tdy += dy
+            while 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and (self.game.board[self.y + tdy][self.x + tdx] is None or self.game.board[self.y + tdy][self.x + tdx].team != self.team):
+                self.moves.append((tdx, tdy))
+                if (self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].team != self.team):
+                    break
+                tdx += dx
+                tdy += dy
+                
+    def setImage(self) -> None:
+        if self.team:
+            self.image = pyg.image.load('assets\whitepiece\whiteRook.png')
+        else:
+            self.image = pyg.image.load('assets/blackpiece/blackRook.png')
+            
+            
+class Bishop(Pawn):
+    def __init__(self, game, x: int, y: int, t: bool) -> None:
+        super().__init__(game, x, y, t)
+        self.point = 3
+        self.name = 'B'
+        
+    def setPossibleMoves(self) -> None:
+        self.moves = []
+        
+        ds = [(1, 1), (1, -1), (-1, -1), (-1, 1)]
+        for dx, dy in ds:
+            tdx = 0
+            tdy = 0
+            
+            tdx += dx
+            tdy += dy
+            while 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and (self.game.board[self.y + tdy][self.x + tdx] is None or self.game.board[self.y + tdy][self.x + tdx].team != self.team):
+                self.moves.append((tdx, tdy))
+                if (self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].team != self.team):
+                    break
+                tdx += dx
+                tdy += dy
+                
+    def setImage(self) -> None:
+        if self.team:
+            self.image = pyg.image.load('assets\whitepiece\whiteBishop.png')
+        else:
+            self.image = pyg.image.load('assets/blackpiece/blackBishop.png')
+            
+            
+class Knight(Pawn):
+    def __init__(self, game, x: int, y: int, t: bool) -> None:
+        super().__init__(game, x, y, t)
+        self.point = 3
+        self.name = 'N'
+        
+    def setPossibleMoves(self) -> None:
+        self.moves = []
+        
+        ds = [(-1, -2), (1, -2), (2, -1), (2, 1)]
+        
+        for dx, dy in ds:
+            
+            if not (0<=self.x+dx<self.game.BASESIZE[0] and 0<=self.y+dy<self.game.BASESIZE[1]):
+                continue
+            
+            if self.game.board[self.y + dy][self.x + dx] is not None and self.game.board[self.y + dy][self.x + dx].team != self.team or self.game.board[self.y + dy][self.x + dx] is None:
+                self.moves.append((dx, dy))
+                
+    def setImage(self) -> None:
+        if self.team:
+            self.image = pyg.image.load('assets\whitepiece\whiteKnight.png')
+        else:
+            self.image = pyg.image.load('assets/blackpiece/blackKnight.png')
