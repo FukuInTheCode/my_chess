@@ -19,10 +19,7 @@ class Engine():
         
     def run(self) -> None:
         self.clock = pyg.time.Clock()
-        
-
-
-        
+  
         while self.is_running:
             self.clock.tick(60)
             
@@ -30,6 +27,16 @@ class Engine():
             
             self.game.update()
             self.game.draw()
+            
+            if pyg.mouse.get_pressed()[0]:
+                cursor_x, cursor_y = pyg.mouse.get_pos()
+                cursor_x //= self.game.square_size_w
+                cursor_y //= self.game.square_size_h
+                cursor_x = int(cursor_x)
+                cursor_y = int(cursor_y)
+                if self.game.board[cursor_y][cursor_x] is not None:
+                    self.game.hovered = self.game.board[cursor_y][cursor_x]
+                    
             
             pyg.display.flip()
             
