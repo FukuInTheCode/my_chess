@@ -208,7 +208,7 @@ class Knight(Pawn):
     def setPossibleMoves(self, wK: bool = False) -> None:
         self.moves = []
         
-        ds = [(-1, -2), (1, -2), (2, -1), (2, 1)]
+        ds = [(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]
         
         for dx, dy in ds:
             
@@ -236,12 +236,15 @@ class King(Pawn):
         
         ds = [(0, 1), (0, -1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, -1), (-1, 1)]
         
+        if wK:
+            return ds
+        
         for dx, dy in ds:
             
             if not (0<=self.x+dx<self.game.BASESIZE[0] and 0<=self.y+dy<self.game.BASESIZE[1]):
                 continue
             
-            if self.game.board[self.y + dy][self.x + dx] is not None and self.game.board[self.y + dy][self.x + dx].team != self.team or self.game.board[self.y + dy][self.x + dx] is None:
+            if (self.game.board[self.y + dy][self.x + dx] is not None and self.game.board[self.y + dy][self.x + dx].team != self.team and self.game.board[self.y + dy][self.x + dx].name != 'K') or self.game.board[self.y + dy][self.x + dx] is None:
                 tmp = True
                 for piece in self.game.pieces:
                     if piece.team == self.team or piece is self:

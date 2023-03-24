@@ -34,10 +34,26 @@ class Game():
             self.pieces.append(Pawn(self, i, 7, False))
             
         
-        self.pieces.append(Rook(self, 4, 3, False))
-        self.pieces.append(Bishop(self, 5, 3, False))
-        self.pieces.append(Knight(self, 6, 3, True))
-        self.pieces.append(King(self, 1, 5, True))
+        self.pieces.append(Queen(self, 4, 1, True))
+        self.pieces.append(Queen(self, 4, 8, False))
+        
+        self.pieces.append(King(self, 5, 1, True))
+        self.pieces.append(King(self, 5, 8, False))
+        
+        self.pieces.append(Bishop(self, 3, 1, True))
+        self.pieces.append(Bishop(self, 3, 8, False))
+        self.pieces.append(Bishop(self, 6, 1, True))
+        self.pieces.append(Bishop(self, 6, 8, False))
+        
+        self.pieces.append(Knight(self, 2, 1, True))
+        self.pieces.append(Knight(self, 2, 8, False))
+        self.pieces.append(Knight(self, 7, 1, True))
+        self.pieces.append(Knight(self, 7, 8, False))
+        
+        self.pieces.append(Rook(self, 1, 1, True))
+        self.pieces.append(Rook(self, 1, 8, False))
+        self.pieces.append(Rook(self, 8, 1, True))
+        self.pieces.append(Rook(self, 8, 8, False))
         
 
         self.update()
