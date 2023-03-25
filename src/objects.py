@@ -65,12 +65,14 @@ class Pawn():
                     if self.y == self.game.BASESIZE[1]-4 and self.game.board[self.y][self.x - 1] is not None and self.game.board[self.y][self.x - 1].name == 'P' and self.game.board[self.y][self.x - 1].last_move == (0, -2):
                         self.moves.append((-1, 1))
                         
+                        
 
     def get_attacked_squares(self):
         return ([(self.x-1, self.y-1), (self.x+1, self.y-1)] if self.team else [(self.x-1, self.y+1), (self.x+1, self.y+1)]) if self.name == 'P' else self.get_moves(True, True)
                         
-    def get_moves(self, full: bool = False, wK: bool = False) -> tuple:
+    def get_moves(self, full: bool = False, wK: bool = False) -> list:
         self.setPossibleMoves(wK)
+        
         if full:
             return [(self.x + dx, self.y + dy) for dx, dy in self.moves]
         
@@ -95,7 +97,6 @@ class Pawn():
         self.setPossibleMoves()
         self.draw()
         
-        
 class Queen(Pawn):
     
     def __init__(self, game, x: int, y: int, t: bool) -> None:
@@ -115,14 +116,18 @@ class Queen(Pawn):
             tdy += dy
             while 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and (self.game.board[self.y + tdy][self.x + tdx] is None or self.game.board[self.y + tdy][self.x + tdx].team != self.team):
                 self.moves.append((tdx, tdy))
-                if self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].name == 'K' and self.game.board[self.y + tdy][self.x + tdx].team != self.team and wK:
+                if self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].name == 'K' and wK:
                     tdx += dx
                     tdy += dy
                     continue
-                if (self.game.board[self.y + tdy][self.x + tdx] is not None and self.game.board[self.y + tdy][self.x + tdx].team != self.team):
+                if self.game.board[self.y + tdy][self.x + tdx] is not None:
                     break
                 tdx += dx
                 tdy += dy
+                
+            if 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and wK:
+                self.moves.append((tdx, tdy))
+                
     
     def setImage(self) -> None:
         if self.team:
@@ -158,6 +163,10 @@ class Rook(Pawn):
                 tdx += dx
                 tdy += dy
                 
+                            
+            if 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and wK:
+                self.moves.append((tdx, tdy))
+                
     def setImage(self) -> None:
         if self.team:
             self.image = pyg.image.load('assets\whitepiece\whiteRook.png')
@@ -191,6 +200,10 @@ class Bishop(Pawn):
                     break
                 tdx += dx
                 tdy += dy
+            
+                            
+            if 0 <= self.x + tdx < self.game.BASESIZE[0] and 0<=self.y + tdy<self.game.BASESIZE[1] and wK:
+                self.moves.append((tdx, tdy))
                 
     def setImage(self) -> None:
         if self.team:
@@ -215,7 +228,10 @@ class Knight(Pawn):
             if not (0<=self.x+dx<self.game.BASESIZE[0] and 0<=self.y+dy<self.game.BASESIZE[1]):
                 continue
             
-            if self.game.board[self.y + dy][self.x + dx] is not None and self.game.board[self.y + dy][self.x + dx].team != self.team or self.game.board[self.y + dy][self.x + dx] is None:
+            if (self.game.board[self.y + dy][self.x + dx] is not None and self.game.board[self.y + dy][self.x + dx].team != self.team) or self.game.board[self.y + dy][self.x + dx] is None:
+                self.moves.append((dx, dy))
+                
+            if wK:
                 self.moves.append((dx, dy))
                 
     def setImage(self) -> None:
@@ -237,7 +253,8 @@ class King(Pawn):
         ds = [(0, 1), (0, -1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, -1), (-1, 1)]
         
         if wK:
-            return ds
+            self.moves = ds
+            return
         
         for dx, dy in ds:
             
