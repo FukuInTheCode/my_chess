@@ -1,5 +1,6 @@
 import math
 import pygame as pyg
+from copy import deepcopy
 from objects import Pawn, Queen, Rook, Bishop, Knight, King
 
 class Game():
@@ -66,7 +67,9 @@ class Game():
             self.board[piece.y][piece.x] = piece
         
         for piece in self.pieces:
-            piece.setPossibleMoves()
+            for dx, dy in piece.get_moves():
+                 if self.check_check(piece, dx, dy):
+                     piece.moves.remove((dx, dy))
     
     def draw(self) -> None:
         
@@ -91,3 +94,4 @@ class Game():
                 bpts += piece.point
         
         return wpts, bpts
+   

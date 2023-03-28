@@ -1,3 +1,4 @@
+
 import pygame as pyg
 import math
 from game import Game
@@ -24,7 +25,6 @@ class Engine():
             self.clock.tick(60)
             
             self.screen.fill(self.BLACK)
-            self.game.update()
             self.game.draw()
                  
             if pyg.mouse.get_pressed()[0]:
@@ -33,7 +33,6 @@ class Engine():
                 cursor_y //= self.game.square_size_h
                 cursor_x = int(cursor_x)
                 cursor_y = int(cursor_y)
-                print(cursor_x, cursor_y)
                 if self.game.clicked is not None and self.game.clicked.team == self.game.is_turn:
                     if (cursor_x, cursor_y) in self.game.clicked.get_moves(True):
                         dx = cursor_x - self.game.clicked.x
@@ -47,9 +46,9 @@ class Engine():
                         
                         for piece in self.game.pieces:
                             piece.last_move = (0, 0)
-                            
                         self.game.clicked.set_pos(dx, dy)
                         self.game.is_turn = not self.game.is_turn
+                        self.game.update()
                         
                 
                 self.game.clicked = self.game.board[cursor_y][cursor_x]
