@@ -224,7 +224,6 @@ class Knight(Pawn):
         
         tmp = []
         
-        to_pass = 0
         for m in moves:
 
             if board.check_xy(*m) and (board.is_xy_none(*m) or board.get_xy(*m).team != self.team):
@@ -239,5 +238,37 @@ class Knight(Pawn):
             
         else:
             self.image = pyg.image.load('assets/blackpiece/blackKnight.png')
+            
+        self.image = self.image.convert_alpha()
+        
+
+class King(Pawn):
+    def __init__(self, x: int, y: int, team: int) -> None:
+        super().__init__(x, y, team)
+        self.type = 'K'
+        self.point = 0
+        
+    def get_possible_ds_moves(self) -> list:
+        return []
+        
+    def get_faisable_position(self, board: Board) -> list:
+        moves = self.get_possible_ds_moves()
+        
+        tmp = []
+        
+        for m in moves:
+
+            if board.check_xy(*m) and (board.is_xy_none(*m) or board.get_xy(*m).team != self.team):
+                tmp.append(m)
+                
+        return tmp
+    
+
+    def set_image(self):
+        if self.team == 1:
+            self.image = pyg.image.load('assets\whitepiece\whiteKing.png')
+            
+        else:
+            self.image = pyg.image.load('assets/blackpiece/blackKing.png')
             
         self.image = self.image.convert_alpha()

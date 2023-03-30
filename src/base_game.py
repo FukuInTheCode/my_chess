@@ -15,7 +15,10 @@ class Game:
         for i in range(1, 9):
             self.board.add(Pawn(i, 2, 1))
             self.board.add(Pawn(i, 7, -1))
-            
+        
+        self.board.add(King(5, 1, 1))
+        self.board.add(King(5, 8, -1))    
+        
         self.board.add(Queen(4, 1, 1))
         self.board.add(Queen(4, 8, -1))
         
