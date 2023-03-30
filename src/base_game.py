@@ -11,9 +11,9 @@ class Game:
         self.init_pieces()
         
     def init_pieces(self):
-        self.board.add(Pawn(2, 2, 1))
-        self.board.add(Pawn(1, 3, -1))
-        self.board.add(Pawn(3, 4, -1))
+        for i in range(1, 9):
+            self.board.add(Pawn(i, 2, 1))
+            self.board.add(Pawn(i, 7, -1))
         
         for piece in self.board.pieces:
             self.board.set_to(piece)

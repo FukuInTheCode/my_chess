@@ -37,9 +37,7 @@ class Pawn:
                 tmp.append(moves[1])
                 
         for m in (moves[2], moves[3]):
-            
-            print(board.get_xy(m[0], self.y).last_move) if board.get_xy(m[0], self.y) is not None else 0
-                
+           
             if board.check_xy(*m) and not board.is_xy_none(*m) and board.get_xy(*m).team != self.team:
                 tmp.append(m)
                 
