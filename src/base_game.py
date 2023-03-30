@@ -8,6 +8,7 @@ class Game:
         self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, scr_w, scr_h)
         self.name = 'Chess Game'
         self.clicked = None
+        self.is_turn = 1
         self.init_pieces()
         
     def init_pieces(self):
@@ -31,10 +32,12 @@ class Game:
         
         self.clicked = self.board.get_xy(mx, my)
         
-        print(tmp, self.clicked)
-        print(mx, my)
-        
+        if self.clicked is not None and self.clicked.team != self.is_turn:
+            self.clicked = None
+
         if tmp is not None and (mx, my) in tmp.get_faisable_position(self.board):
+            self.is_turn *= -1
             self.board.move(*tmp.get_xy(), mx, my)
             self.clicked = None
             self.board.update()
+            
