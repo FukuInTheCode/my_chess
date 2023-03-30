@@ -9,6 +9,8 @@ class Board:
         self.sq_w = int(scr_w//w)
         self.sq_h = int(scr_h//h)
         
+        self.last_moved = None
+        
         self.pieces = []
         
     def get_xy(self, x:int, y:int):
@@ -29,13 +31,21 @@ class Board:
         
     def move(self, x, y, tox, toy) -> None:
         
+        for piece in self.pieces:
+            piece.last_move = None
+        
         tmp = self.get_xy(tox, toy)
         
-        self.get_xy(x, y).set_pos(tox, toy)
+        self.last_moved = self.get_xy(x, y)
+        
+        self.last_moved.set_pos(tox, toy)
         
         if tmp is not None:
             self.pieces.remove(tmp)
-
+            
+        elif self.last_moved.type == 'P':
+            if tox - x != 0:
+                self.pieces.remove(self.get_xy(tox, y))
 
     def check_xy(self, x, y)->bool:
         if (0<x<=self.w) and (0<y<=self.h):

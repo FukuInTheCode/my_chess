@@ -9,7 +9,7 @@ class Pawn:
         self.team = int(team//abs(team))
         self.type = 'P'
         self.point = 1*self.team
-        self.last_move = (0, 0)
+        self.last_move = None
         
         self.set_image()
         
@@ -37,11 +37,13 @@ class Pawn:
                 tmp.append(moves[1])
                 
         for m in (moves[2], moves[3]):
+            
+            print(board.get_xy(m[0], self.y).last_move) if board.get_xy(m[0], self.y) is not None else 0
                 
             if board.check_xy(*m) and not board.is_xy_none(*m) and board.get_xy(*m).team != self.team:
                 tmp.append(m)
                 
-            elif board.check_xy(*m) and board.is_xy_none(*m) and not board.is_xy_none(m[0], self.y) and board.get_xy(m[0], self.y).team != self.team and board.get_xy(m[0], self.y).type == self.type and board.get_xy(m[0], self.y).last_move == (0, 2*self.team):
+            elif board.check_xy(*m) and board.is_xy_none(*m) and not board.is_xy_none(m[0], self.y) and board.get_xy(m[0], self.y).team != self.team and board.get_xy(m[0], self.y).type == self.type and board.get_xy(m[0], self.y).last_move == (0, 2*self.team*(-1)):
                 tmp.append(m)
                 
         return tmp
@@ -57,8 +59,10 @@ class Pawn:
         
     
     def set_pos(self, x, y) -> None:
+        self.last_move = (x - self.x, y - self.y)
         self.x = x
         self.y = y
+        
                 
     
     def draw(self, scr:pyg.Surface, sq_w, sq_h):
