@@ -22,3 +22,22 @@ def PAWN_DXDY_MOVES(team:int):
     (1, 1*team),
     (-1, 1*team)
     ]
+    
+    
+def QUEEN_DXDY_MOVES():
+    return [
+        (i, 0) for i in range(1, 8) ] + [
+            (i, 0) for i in range(-1, -8, -1)
+        ] + [
+            (0, i) for i in range(1, 8)
+        ] + [
+            (0, i) for i in range(-1, -8, -1)
+        ] + [
+            (i, i) for i in range(1, 8)
+        ] + [
+            (i, i) for i in range(-1, -8, -1)
+        ] + [
+            (i, -i) for i in range(1, 8)
+        ] + [
+             (i, -i) for i in range(-1, -8, -1)
+        ]

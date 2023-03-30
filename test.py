@@ -1,2 +1,3 @@
-if 2:
-     print(1)
+from src.CONSTANT import *
+
+print(QUEEN_DXDY_MOVES())

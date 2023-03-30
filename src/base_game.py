@@ -15,6 +15,9 @@ class Game:
         for i in range(1, 9):
             self.board.add(Pawn(i, 2, 1))
             self.board.add(Pawn(i, 7, -1))
+            
+        self.board.add(Queen(4, 1, 1))
+        self.board.add(Queen(4, 8, -1))
         
         for piece in self.board.pieces:
             self.board.set_to(piece)
@@ -40,4 +43,3 @@ class Game:
             self.board.move(*tmp.get_xy(), mx, my)
             self.clicked = None
             self.board.update()
-            
