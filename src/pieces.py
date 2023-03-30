@@ -117,3 +117,127 @@ class Queen(Pawn):
             self.image = pyg.image.load('assets/blackpiece/blackQueen.png')
             
         self.image = self.image.convert_alpha()
+        
+        
+class Rook(Pawn):
+    def __init__(self, x: int, y: int, team: int) -> None:
+        super().__init__(x, y, team)
+        self.type = 'R'
+        self.point = 5
+        
+    def get_possible_ds_moves(self) -> list:
+        tmp = []
+        for dx, dy in ROOK_DXDY_MOVES():
+            tmp.append((self.x + dx, self.y + dy))
+            
+        return tmp
+        
+    def get_faisable_position(self, board: Board) -> list:
+        moves = self.get_possible_ds_moves()
+        
+        tmp = []
+        
+        to_pass = 0
+        for i, m in enumerate(moves):
+            if to_pass != 0:
+                to_pass -= 1
+                continue
+            if board.check_xy(*m) and (board.is_xy_none(*m) or board.get_xy(*m).team != self.team):
+                tmp.append(m)
+                if not board.is_xy_none(*m):
+                    to_pass = 7-(i+1)%7
+                
+            else:
+                to_pass = 7-(i+1)%7
+                
+        return tmp
+    
+
+    def set_image(self):
+        if self.team == 1:
+            self.image = pyg.image.load('assets\whitepiece\whiteRook.png')
+            
+        else:
+            self.image = pyg.image.load('assets/blackpiece/blackRook.png')
+            
+        self.image = self.image.convert_alpha()
+        
+class Bishop(Pawn):
+    def __init__(self, x: int, y: int, team: int) -> None:
+        super().__init__(x, y, team)
+        self.type = 'B'
+        self.point = 3
+        
+    def get_possible_ds_moves(self) -> list:
+        tmp = []
+        for dx, dy in BISHOP_DXDY_MOVES():
+            tmp.append((self.x + dx, self.y + dy))
+            
+        return tmp
+        
+    def get_faisable_position(self, board: Board) -> list:
+        moves = self.get_possible_ds_moves()
+        
+        tmp = []
+        
+        to_pass = 0
+        for i, m in enumerate(moves):
+            if to_pass != 0:
+                to_pass -= 1
+                continue
+            if board.check_xy(*m) and (board.is_xy_none(*m) or board.get_xy(*m).team != self.team):
+                tmp.append(m)
+                if not board.is_xy_none(*m):
+                    to_pass = 7-(i+1)%7
+                
+            else:
+                to_pass = 7-(i+1)%7
+                
+        return tmp
+    
+
+    def set_image(self):
+        if self.team == 1:
+            self.image = pyg.image.load('assets\whitepiece\whiteBishop.png')
+            
+        else:
+            self.image = pyg.image.load('assets/blackpiece/blackBishop.png')
+            
+        self.image = self.image.convert_alpha()
+        
+
+class Knight(Pawn):
+    def __init__(self, x: int, y: int, team: int) -> None:
+        super().__init__(x, y, team)
+        self.type = 'N'
+        self.point = 3
+        
+    def get_possible_ds_moves(self) -> list:
+        tmp = []
+        for dx, dy in KNIGHT_DXDY_MOVES():
+            tmp.append((self.x + dx, self.y + dy))
+            
+        return tmp
+        
+    def get_faisable_position(self, board: Board) -> list:
+        moves = self.get_possible_ds_moves()
+        
+        tmp = []
+        
+        to_pass = 0
+        for m in moves:
+
+            if board.check_xy(*m) and (board.is_xy_none(*m) or board.get_xy(*m).team != self.team):
+                tmp.append(m)
+                
+        return tmp
+    
+
+    def set_image(self):
+        if self.team == 1:
+            self.image = pyg.image.load('assets\whitepiece\whiteKnight.png')
+            
+        else:
+            self.image = pyg.image.load('assets/blackpiece/blackKnight.png')
+            
+        self.image = self.image.convert_alpha()

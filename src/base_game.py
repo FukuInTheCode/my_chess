@@ -19,6 +19,23 @@ class Game:
         self.board.add(Queen(4, 1, 1))
         self.board.add(Queen(4, 8, -1))
         
+        self.board.add(Rook(1, 1, 1))
+        self.board.add(Rook(1, 8, -1))
+        self.board.add(Rook(8, 1, 1))
+        self.board.add(Rook(8, 8, -1))
+        
+        self.board.add(Bishop(3, 1, 1))
+        self.board.add(Bishop(6, 8, -1))
+        self.board.add(Bishop(6, 1, 1))
+        self.board.add(Bishop(3, 8, -1))
+        
+        self.board.add(Knight(2, 1, 1))
+        self.board.add(Knight(7, 8, -1))
+        self.board.add(Knight(7, 1, 1))
+        self.board.add(Knight(2, 8, -1))
+        
+        
+        
         for piece in self.board.pieces:
             self.board.set_to(piece)
         

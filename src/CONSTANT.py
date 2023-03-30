@@ -41,3 +41,39 @@ def QUEEN_DXDY_MOVES():
         ] + [
              (i, -i) for i in range(-1, -8, -1)
         ]
+        
+
+def ROOK_DXDY_MOVES():
+    return [
+        (i, 0) for i in range(1, 8) ] + [
+            (i, 0) for i in range(-1, -8, -1)
+        ] + [
+            (0, i) for i in range(1, 8)
+        ] + [
+            (0, i) for i in range(-1, -8, -1)
+        ]
+        
+
+def BISHOP_DXDY_MOVES():
+    return [
+            (i, i) for i in range(1, 8)
+        ] + [
+            (i, i) for i in range(-1, -8, -1)
+        ] + [
+            (i, -i) for i in range(1, 8)
+        ] + [
+             (i, -i) for i in range(-1, -8, -1)
+        ]
+        
+def KNIGHT_DXDY_MOVES():
+    return [
+        (1, 2),
+        (2, 1),
+        (2, -1),
+        (1, -2),
+        (-1, -2),
+        (-2, -1),
+        (-2, 1),
+        (-1, 2),
+    ]
+        
