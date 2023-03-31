@@ -72,7 +72,8 @@ class Pawn:
 
     def draw_moves(self, scr, board):
         for x, y in self.get_faisable_position(board):
-            pyg.draw.circle(scr, GRAY, ((x - 1 + 1/2)*board.sq_w, (y - 1 + 1/2)*board.sq_h), min(board.sq_w, board.sq_h)//10)
+            if not board.in_check(*self.get_xy(), x, y, self.team):
+                pyg.draw.circle(scr, GRAY, ((x - 1 + 1/2)*board.sq_w, (y - 1 + 1/2)*board.sq_h), min(board.sq_w, board.sq_h)//10)
     
     
     def copy(self):
