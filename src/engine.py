@@ -1,62 +1,38 @@
-
 import pygame as pyg
-import math
-from game import Game
-import sys
+from base_game import Game
+from CONSTANT import BLACK
 
-class Engine():
-    
-    BLACK = (0, 0, 0)
-    
-    def __init__(self, screen: pyg.Surface) -> None:
+class Engine:
+    def __init__(self, scr: pyg.Surface) -> None:
+        """
         
-        self.screen = screen
-        
-        self.game = Game(self)
-        
+        """
+        self.game_type = Game(*scr.get_size())
+        self.screen = scr
         self.is_running = True
+        
+        self.right_mouse = pyg.mouse.get_pos()
+        
+        pyg.display.set_caption(self.game_type.name)
         
         self.run()
         
-    def run(self) -> None:
-        self.clock = pyg.time.Clock()
-  
+    def draw(self) -> None:
+        self.game_type.draw(self.screen)
+        
+    def run(self):
         while self.is_running:
-            self.clock.tick(60)
-            
-            self.screen.fill(self.BLACK)
-            self.game.draw()
-                 
-            if pyg.mouse.get_pressed()[0]:
-                cursor_x, cursor_y = pyg.mouse.get_pos()
-                cursor_x //= self.game.square_size_w
-                cursor_y //= self.game.square_size_h
-                cursor_x = int(cursor_x)
-                cursor_y = int(cursor_y)
-                if self.game.clicked is not None and self.game.clicked.team == self.game.is_turn:
-                    if (cursor_x, cursor_y) in self.game.clicked.get_moves(True):
-                        dx = cursor_x - self.game.clicked.x
-                        dy = cursor_y - self.game.clicked.y
-                        if self.game.board[cursor_y][cursor_x] is not None:
-                            self.game.pieces.remove(self.game.board[cursor_y][cursor_x])
-                            
-                        elif self.game.clicked.name == 'P' and self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x] is not None and self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x].name == 'P' and self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x].last_move == (0, (2 if self.game.clicked.team else -2)) and dx != 0:
-                            self.game.pieces.remove(self.game.board[cursor_y + (1 if self.game.clicked.team else -1)][cursor_x])
-                            
-                        
-                        for piece in self.game.pieces:
-                            piece.last_move = (0, 0)
-                        self.game.clicked.set_pos(dx, dy)
-                        self.game.is_turn = not self.game.is_turn
-                        self.game.update()
-                        
-                
-                self.game.clicked = self.game.board[cursor_y][cursor_x]
-                
-            pyg.display.flip()
-            
+            self.screen.fill(BLACK)
+            self.draw()
             for event in pyg.event.get():
                 if event.type == pyg.QUIT:
                     self.is_running = False
                     pyg.quit()
-                    sys.exit()
+                    quit()
+                    
+                if event.type == pyg.MOUSEBUTTONDOWN and pyg.mouse.get_pressed()[0]:
+                    
+                    self.game_type.rightclick(*pyg.mouse.get_pos())
+                    
+                    
+            pyg.display.flip()
