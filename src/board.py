@@ -1,6 +1,7 @@
 import pygame as pyg
 from CONSTANT import BLACK_SQUARE_COLOR, WHITE_SQUARE_COLOR
 from copy import deepcopy
+from pieces import Queen
 
 class Board:
     def __init__(self, w:int, h:int, scr_w:int, scr_h:int) -> None:
@@ -62,6 +63,16 @@ class Board:
             if tox - x != 0:
                 self.pieces.remove(self.get_xy(tox, y))
                 
+        if self.last_moved.type == 'P' and self.last_moved.y == (8 if self.last_moved.team == 1 else 1):
+            q = Queen(*self.last_moved.get_xy(), self.last_moved.team)
+            q.last_move = self.last_moved.last_move
+            q.has_moved = self.last_moved.has_moved
+            self.pieces.remove(self.last_moved)
+            self.add(q)
+            self.last_moved = q
+            
+            
+                
         if self.last_moved.type == 'K' and (tox - x != 0 or tox - x != 1 or tox - x != -1):
             if tox - x == 2:
                 for i in range(tox, self.w + 1):
@@ -119,13 +130,6 @@ class Board:
                     if tmp.get_xy(*m) == king:
                         return True
                 
-        return False
-    
-    def is_attacked(self, x, y, team):
-        for piece in self.pieces:
-            if piece.team != team and (x, y) in piece.get_faisable_position(self):
-                return True
-            
         return False
     
 

@@ -1,6 +1,5 @@
 import pygame as pyg
 from CONSTANT import *
-from board import Board
 
 class Pawn:
     def __init__(self, x:int, y:int, team:int) -> None:
@@ -25,7 +24,7 @@ class Pawn:
             
         return tmp
             
-    def get_faisable_position(self, board:Board)->list:
+    def get_faisable_position(self, board)->list:
         moves = self.get_possible_ds_moves()
         
         tmp = []
@@ -98,7 +97,7 @@ class Queen(Pawn):
             
         return tmp
         
-    def get_faisable_position(self, board: Board) -> list:
+    def get_faisable_position(self, board) -> list:
         moves = self.get_possible_ds_moves()
         
         tmp = []
@@ -143,7 +142,7 @@ class Rook(Pawn):
             
         return tmp
         
-    def get_faisable_position(self, board: Board) -> list:
+    def get_faisable_position(self, board) -> list:
         moves = self.get_possible_ds_moves()
         
         tmp = []
@@ -187,7 +186,7 @@ class Bishop(Pawn):
             
         return tmp
         
-    def get_faisable_position(self, board: Board) -> list:
+    def get_faisable_position(self, board) -> list:
         moves = self.get_possible_ds_moves()
         
         tmp = []
@@ -232,7 +231,7 @@ class Knight(Pawn):
             
         return tmp
         
-    def get_faisable_position(self, board: Board) -> list:
+    def get_faisable_position(self, board) -> list:
         moves = self.get_possible_ds_moves()
         
         tmp = []
@@ -269,7 +268,7 @@ class King(Pawn):
             
         return tmp
         
-    def get_faisable_position(self, board: Board) -> list:
+    def get_faisable_position(self, board) -> list:
         moves = self.get_possible_ds_moves()
         
         tmp = []
