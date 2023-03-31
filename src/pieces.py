@@ -258,13 +258,17 @@ class King(Pawn):
         self.copyclass = King
         
     def get_possible_ds_moves(self) -> list:
-        return []
+        tmp = []
+        for dx, dy in KING_DXDY_MOVES():
+            tmp.append((self.x + dx, self.y + dy))
+            
+        return tmp
         
     def get_faisable_position(self, board: Board) -> list:
         moves = self.get_possible_ds_moves()
         
         tmp = []
-            
+
         for m in moves:
 
             if board.check_xy(*m) and (board.is_xy_none(*m) or board.get_xy(*m).team != self.team):
