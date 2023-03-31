@@ -4,13 +4,14 @@ from board import Board
 
 class Pawn:
     def __init__(self, x:int, y:int, team:int) -> None:
+        self.copyclass = Pawn
         self.x = x
         self.y = y
         self.team = int(team//abs(team))
         self.type = 'P'
         self.point = 1*self.team
         self.last_move = None
-        self.copyclass = Pawn
+        self.has_moved = False
         
         self.set_image()
         
@@ -75,7 +76,10 @@ class Pawn:
     
     
     def copy(self):
-        return self.copyclass(self.x, self.y, self.team)
+        tmp = self.copyclass(self.x, self.y, self.team)
+        tmp.last_move = self.last_move
+        tmp.has_moved = self.has_moved
+        return tmp
             
             
             
@@ -270,10 +274,32 @@ class King(Pawn):
         tmp = []
 
         for m in moves:
-
             if board.check_xy(*m) and (board.is_xy_none(*m) or board.get_xy(*m).team != self.team):
                 tmp.append(m)
-                
+
+        if not self.has_moved:
+            for rook in board.get_piece('R', self.team):
+                if not rook.has_moved and self.y == rook.y:
+                    if rook.x - self.x >= 2:
+                        good = True
+                        for i in range(self.x + 1, rook.x):
+                            if not board.is_xy_none(i, self.y):
+                                good = False
+                                
+                        if good:
+                            tmp.append((self.x + 2, self.y))
+                            
+                    elif rook.x - self.x <= 2:
+                        good = True
+                        for i in range(rook.x + 1, self.x):
+                            if not board.is_xy_none(i, self.y):
+                                good = False
+                                
+                        if good:
+                            tmp.append((self.x - 2, self.y))
+        
+        
+
         return tmp
     
 

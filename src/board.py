@@ -20,6 +20,15 @@ class Board:
     def get_xy(self, x:int, y:int):
         return self.board[y-1][x-1]
     
+    def get_piece(self, type, team):
+        tmp = []
+        
+        for piece in self.pieces:
+            if piece.type == type and piece.team == team:
+                tmp.append(piece)
+        
+        return tmp
+    
     def is_xy_none(self, x:int, y:int)->bool:
         return self.get_xy(x, y) == None
     
@@ -44,12 +53,33 @@ class Board:
         
         self.last_moved.set_pos(tox, toy)
         
+        self.last_moved.has_moved = True
+        
         if tmp is not None:
             self.pieces.remove(tmp)
             
         elif self.last_moved.type == 'P':
             if tox - x != 0:
                 self.pieces.remove(self.get_xy(tox, y))
+                
+        if self.last_moved.type == 'K' and (tox - x != 0 or tox - x != 1 or tox - x != -1):
+            if tox - x == 2:
+                for i in range(tox, self.w + 1):
+                    if not self.check_xy(i, self.last_moved.y):
+                        raise Exception('Trying to castle without a rook!')
+                    
+                    elif not self.is_xy_none(i, self.last_moved.y) and self.get_xy(i, self.last_moved.y).type == 'R' and not self.get_xy(i, self.last_moved.y).has_moved:
+                        self.move(i, self.last_moved.y, tox - 1, toy)
+                        break
+                    
+            if tox - x == -2:
+                for i in range(tox, 0, -1):
+                    if not self.check_xy(i, self.last_moved.y):
+                        raise Exception('Trying to castle without a rook!')
+                    
+                    elif not self.is_xy_none(i, self.last_moved.y) and self.get_xy(i, self.last_moved.y).type == 'R' and not self.get_xy(i, self.last_moved.y).has_moved:
+                        self.move(i, self.last_moved.y, tox + 1, toy)
+                        break
 
     def check_xy(self, x, y)->bool:
         if (0<x<=self.w) and (0<y<=self.h):
@@ -89,6 +119,13 @@ class Board:
                     if tmp.get_xy(*m) == king:
                         return True
                 
+        return False
+    
+    def is_attacked(self, x, y, team):
+        for piece in self.pieces:
+            if piece.team != team and (x, y) in piece.get_faisable_position(self):
+                return True
+            
         return False
     
 
