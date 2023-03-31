@@ -10,6 +10,7 @@ class Pawn:
         self.type = 'P'
         self.point = 1*self.team
         self.last_move = None
+        self.copyclass = Pawn
         
         self.set_image()
         
@@ -63,15 +64,18 @@ class Pawn:
         
                 
     
-    def draw(self, scr:pyg.Surface, sq_w, sq_h):
+    def draw(self, scr, sq_w, sq_h):
         self.image = pyg.transform.scale(self.image, (sq_w, sq_h))
         scr.blit(self.image, ((self.x-1)*sq_w, (self.y-1)*sq_h))
         
 
-    def draw_moves(self, scr:pyg.Surface, board):
+    def draw_moves(self, scr, board):
         for x, y in self.get_faisable_position(board):
             pyg.draw.circle(scr, GRAY, ((x - 1 + 1/2)*board.sq_w, (y - 1 + 1/2)*board.sq_h), min(board.sq_w, board.sq_h)//10)
-            
+    
+    
+    def copy(self):
+        return self.copyclass(self.x, self.y, self.team)
             
             
             
@@ -80,6 +84,7 @@ class Queen(Pawn):
         super().__init__(x, y, team)
         self.type = 'Q'
         self.point = 9
+        self.copyclass = Queen
         
     def get_possible_ds_moves(self) -> list:
         tmp = []
@@ -124,6 +129,7 @@ class Rook(Pawn):
         super().__init__(x, y, team)
         self.type = 'R'
         self.point = 5
+        self.copyclass = Rook
         
     def get_possible_ds_moves(self) -> list:
         tmp = []
@@ -167,6 +173,7 @@ class Bishop(Pawn):
         super().__init__(x, y, team)
         self.type = 'B'
         self.point = 3
+        self.copyclass = Bishop
         
     def get_possible_ds_moves(self) -> list:
         tmp = []
@@ -211,6 +218,7 @@ class Knight(Pawn):
         super().__init__(x, y, team)
         self.type = 'N'
         self.point = 3
+        self.copyclass = Knight
         
     def get_possible_ds_moves(self) -> list:
         tmp = []
@@ -247,6 +255,7 @@ class King(Pawn):
         super().__init__(x, y, team)
         self.type = 'K'
         self.point = 0
+        self.copyclass = King
         
     def get_possible_ds_moves(self) -> list:
         return []
@@ -255,7 +264,7 @@ class King(Pawn):
         moves = self.get_possible_ds_moves()
         
         tmp = []
-        
+            
         for m in moves:
 
             if board.check_xy(*m) and (board.is_xy_none(*m) or board.get_xy(*m).team != self.team):

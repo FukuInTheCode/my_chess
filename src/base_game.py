@@ -58,8 +58,14 @@ class Game:
         if self.clicked is not None and self.clicked.team != self.is_turn:
             self.clicked = None
 
-        if tmp is not None and (mx, my) in tmp.get_faisable_position(self.board):
+        if tmp is not None and (mx, my) in tmp.get_faisable_position(self.board) and not self.board.in_check(*tmp.get_xy(), mx, my, tmp.team):
             self.is_turn *= -1
             self.board.move(*tmp.get_xy(), mx, my)
             self.clicked = None
             self.board.update()
+            if self.board.in_checkmate(self.is_turn):
+                self.checkmate(self.is_turn*-1)
+                
+                
+    def checkmate(self, winner):
+        print('Winner is '+ ('White' if winner == 1 else 'Black'))

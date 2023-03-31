@@ -1,5 +1,6 @@
 import pygame as pyg
 from CONSTANT import BLACK_SQUARE_COLOR, WHITE_SQUARE_COLOR
+from copy import deepcopy
 
 class Board:
     def __init__(self, w:int, h:int, scr_w:int, scr_h:int) -> None:
@@ -8,6 +9,9 @@ class Board:
         self.h = h
         self.sq_w = int(scr_w//w)
         self.sq_h = int(scr_h//h)
+        
+        self.scr_w = scr_w
+        self.scr_h = scr_h
         
         self.last_moved = None
         
@@ -53,7 +57,7 @@ class Board:
         
         return False
     
-    def draw(self, scr:pyg.Surface) -> None:
+    def draw(self, scr) -> None:
         
         for i in range(self.h+1):
             for j in range(self.w):
@@ -68,3 +72,42 @@ class Board:
         self.board = [[None for i in range(self.w)] for j in range(self.h)]
         for piece in self.pieces:
             self.set_to(piece)
+            
+    def in_check(self, x, y, tox, toy, team) -> bool:
+        tmp = self.copy()
+        tmp.move(x, y, tox, toy)
+        tmp.update()
+        
+        for piece in tmp.pieces:
+            if piece.type == 'K' and piece.team == team:
+                king = piece 
+                break
+        
+        for piece in tmp.pieces:
+            if piece.team != team:
+                for m in piece.get_faisable_position(tmp):
+                    if tmp.get_xy(*m) == king:
+                        return True
+                
+        return False
+    
+
+    def in_checkmate(self, team):
+        for piece in self.pieces:
+            for m in piece.get_faisable_position(self):
+                if piece.team == team:
+                    if not self.in_check(*piece.get_xy(), *m, piece.team):
+                        print(piece.get_xy(), m)
+                        return False
+                
+        return True
+        
+    def copy(self):
+        tmp = Board(self.w, self.h, self.scr_w, self.scr_h)
+        for piece in self.pieces:
+            tmp.add(piece.copy())
+            
+        tmp.update()
+        
+        return tmp
+            
