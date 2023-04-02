@@ -152,3 +152,32 @@ class Board:
         
         return tmp
             
+            
+    def print(self):
+        for line in self.board:
+            for square in line:
+                if square is None:
+                    print(' ', end=' ')
+                    
+                else:
+                    print(square.type, end=' ')
+                    
+            print()
+            
+    
+    def compare(self, board):
+        if self.w == board.w and self.h and board.h:
+            for y in range(1, self.h + 1):
+                for x in range(1, self.w+1):
+                    if self.is_xy_none(x, y) != board.is_xy_none(x, y):
+                        return False
+                    
+                    elif self.is_xy_none(x, y) and  board.is_xy_none(x, y):
+                        continue
+                    
+                    elif self.get_xy(x, y).type != board.get_xy(x, y).type or self.get_xy(x, y).team != board.get_xy(x, y).team or self.get_xy(x, y).last_move != board.get_xy(x, y).last_move:
+                        return False   
+                    
+            return True
+        
+        return False          

@@ -5,13 +5,15 @@ from pieces import *
 
 class Game:
     def __init__(self, scr_w:int, scr_h:int) -> None:
-        self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, scr_w, scr_h)
+        self.scr_w = scr_w
+        self.scr_h = scr_h
         self.name = 'Chess Game'
         self.clicked = None
         self.is_turn = 1
-        self.init_pieces()
+        self.init()
         
-    def init_pieces(self):
+    def init(self):
+        self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, self.scr_w, self.scr_h)
         for i in range(1, 9):
             self.board.add(Pawn(i, 2, 1))
             self.board.add(Pawn(i, 7, -1))
@@ -47,7 +49,7 @@ class Game:
         if self.clicked != None:
             self.clicked.draw_moves(scr, self.board)
         
-    def rightclick(self, mx:int, my:int) -> None:
+    def leftclick(self, mx:int, my:int) -> None:
         mx = mx//self.board.sq_w + 1
         my = my//self.board.sq_h + 1
         

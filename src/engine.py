@@ -1,13 +1,11 @@
 import pygame as pyg
 from base_game import Game
+from openings_puzzle import OpeningPuzzle
 from CONSTANT import BLACK
 
 class Engine:
     def __init__(self, scr: pyg.Surface) -> None:
-        """
-        
-        """
-        self.game_type = Game(*scr.get_size())
+        self.game_type = OpeningPuzzle(*scr.get_size())
         self.screen = scr
         self.is_running = True
         
@@ -32,7 +30,7 @@ class Engine:
                     
                 if event.type == pyg.MOUSEBUTTONDOWN and pyg.mouse.get_pressed()[0]:
                     
-                    self.game_type.rightclick(*pyg.mouse.get_pos())
+                    self.game_type.leftclick(*pyg.mouse.get_pos())
                     
                     
             pyg.display.flip()
