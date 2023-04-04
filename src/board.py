@@ -100,7 +100,7 @@ class Board:
     
     def draw(self, scr) -> None:
         
-        for i in range(self.h+1):
+        for i in range(self.h):
             for j in range(self.w):
                 color = BLACK_SQUARE_COLOR if (i+j)%2 == 1 else WHITE_SQUARE_COLOR
                 

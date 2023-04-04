@@ -5,7 +5,8 @@ from CONSTANT import BLACK
 
 class Engine:
     def __init__(self, scr: pyg.Surface) -> None:
-        self.game_type = OpeningPuzzle(*scr.get_size())
+        tmp = scr.get_size()
+        self.game_type = OpeningPuzzle(tmp[0]*0.90, tmp[1]*0.90)
         self.screen = scr
         self.is_running = True
         
@@ -30,7 +31,15 @@ class Engine:
                     
                 if event.type == pyg.MOUSEBUTTONDOWN and pyg.mouse.get_pressed()[0]:
                     
-                    self.game_type.leftclick(*pyg.mouse.get_pos())
+                    mou_x, mou_y = pyg.mouse.get_pos()
+                    
+                    if (0 <= mou_x <= self.game_type.w) and (0<= mou_y <= self.game_type.h):
+                        self.game_type.leftclick(mou_x, mou_y)
+                        
+                    else:
+                        self.game_type.subgame()
+                        
+                    
                     
                     
             pyg.display.flip()

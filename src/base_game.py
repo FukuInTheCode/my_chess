@@ -5,15 +5,15 @@ from pieces import *
 
 class Game:
     def __init__(self, scr_w:int, scr_h:int) -> None:
-        self.scr_w = scr_w
-        self.scr_h = scr_h
+        self.w, self.h = (min(scr_w, scr_h) for i in range(2))
         self.name = 'Chess Game'
         self.clicked = None
         self.is_turn = 1
+        self.buttons = {}
         self.init()
         
     def init(self):
-        self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, self.scr_w, self.scr_h)
+        self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, self.w, self.h)
         for i in range(1, 9):
             self.board.add(Pawn(i, 2, 1))
             self.board.add(Pawn(i, 7, -1))
@@ -48,6 +48,9 @@ class Game:
         self.board.draw(scr)
         if self.clicked != None:
             self.clicked.draw_moves(scr, self.board)
+            
+        for btn in self.buttons.values():
+            pyg.draw.circle(scr, btn['color'], btn['center'], btn['radius'])
         
     def leftclick(self, mx:int, my:int) -> None:
         mx = mx//self.board.sq_w + 1
@@ -71,3 +74,7 @@ class Game:
                 
     def checkmate(self, winner):
         print('Winner is '+ ('White' if winner == 1 else 'Black'))
+        
+    
+    def subgame(self):
+        return
