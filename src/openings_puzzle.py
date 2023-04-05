@@ -1,4 +1,4 @@
-from base_game import Game
+from base_game import Game, Button
 import chess.pgn as chess
 from os.path import isdir, isfile
 from os import listdir
@@ -26,18 +26,13 @@ class OpeningPuzzle(Game):
         super().__init__(scr_w, scr_h)
         self.name = 'Puzzle Openings'
         
-        self.buttons = {
-            'redo': {
-                'center': (self.w*0.9, self.h//18 + self.h),
-                'radius': self.h//42,
-                'color': (255, 0, 0)
-            },
-            'next': {
-                'center': (self.w*0.8, self.h//18 + self.h),
-                'radius': self.h//42,
-                'color': (0, 255, 0)
-            }
-        }
+        self.buttons = [
+            Button(self.w*0.9, self.h//18 + self.h, self.h//42, (0, 255, 0), self.next),
+            Button(self.w*0.8, self.h//18 + self.h, self.h//42, (255, 0, 0), self.redo),
+            Button(self.w*0.7, self.h//18 + self.h, self.h//42, (255, 255, 0), self.see_answ)
+        ]
+        
+        self.streak = 0
         
 
     def init(self):
@@ -47,8 +42,7 @@ class OpeningPuzzle(Game):
         
         self.get_boards()
         self.needed = random.choice(range(2, len(self.boards), 2))
-        self.boards[self.needed].print()
-        self.board = self.boards[self.needed - 1]
+        self.board = self.boards[self.needed - 1].copy()
         
         self.load_data()
         
@@ -123,28 +117,9 @@ class OpeningPuzzle(Game):
                 
             self.check_puzzle()
                 
-    def check_puzzle(self):
-        if self.board.compare(self.boards[self.needed]):
-            self.score += 1
-        
-        self.is_waiting = True
-            
-        self.save_data()
+
     
-    def subgame(self, mx, my):
-        
-        if not self.is_waiting:
-            return
-        
-        def dist(p1, p2):
-            return ((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)**(1/2)
-
-
-
-        if dist((mx, my), self.buttons['next']['center']) <= self.buttons['next']['radius']:
-            self.is_waiting = False
-            self.init()
-
+  
         
     def save_data(self):
         try:
@@ -195,8 +170,52 @@ class OpeningPuzzle(Game):
     
     def draw(self, scr: pyg.Surface) -> None:
         super().draw(scr)
-        font = pygame.font.Font('freesansbold.ttf', int(self.w//(len(self.type[0]) + len(self.type[1]) + 6 )))
-        text = font.render(f'{self.type[0]}, {self.type[1]} : {round(self.score/self.did * 100, 2)}%', True, GREEN, BLUE)
-        textRect = text.get_rect()
-        textRect.topleft = (0, self.h)
-        scr.blit(text, textRect)
+        txts = [
+            f'{self.type[0]}, {self.type[1]} : {round(self.score/self.did * 100, 2)}%',
+            f'Current streak: {self.streak}'
+        ]
+        tmp = 0
+        for txt in txts:
+            font = pygame.font.Font('freesansbold.ttf', int(self.w//len(txt)))
+            text = font.render(txt, True, GREEN, BLUE)
+            textRect = text.get_rect()
+            textRect.topleft = (0, self.h + tmp)
+            tmp = textRect.h+(self.h/0.9)*0.01
+            scr.blit(text, textRect)
+            
+            
+            
+    def check_puzzle(self):
+        if self.board.compare(self.boards[self.needed]):
+            self.score += 1
+            self.streak += 1 
+            
+        else:
+            self.streak = 0
+        
+        self.is_waiting = True
+            
+        self.save_data()
+        
+        
+    def subgame(self, mx, my):
+        
+        if not self.is_waiting:
+            return
+
+
+        for btn in self.buttons:
+            btn.check(mx, my)
+        
+    def next(self):
+        self.is_waiting = False
+        self.init()
+        
+    def redo(self):
+        self.is_waiting = False
+        self.board = self.boards[self.needed-1].copy()
+        self.did += 1
+        self.streak = 0
+        
+    def see_answ(self):
+        self.board = self.boards[self.needed].copy()

@@ -9,7 +9,7 @@ class Game:
         self.name = 'Chess Game'
         self.clicked = None
         self.is_turn = 1
-        self.buttons = {}
+        self.buttons = []
         self.init()
         
     def init(self):
@@ -49,8 +49,8 @@ class Game:
         if self.clicked != None:
             self.clicked.draw_moves(scr, self.board)
             
-        for btn in self.buttons.values():
-            pyg.draw.circle(scr, btn['color'], btn['center'], btn['radius'])
+        for btn in self.buttons:
+            btn.draw(scr)
         
     def leftclick(self, mx:int, my:int) -> None:
         mx = mx//self.board.sq_w + 1
@@ -78,3 +78,23 @@ class Game:
     
     def subgame(self):
         pass
+    
+    
+        
+class Button():
+    def __init__(self, x, y, radius, color, func) -> None:
+        self.radius = radius
+        self.x = x
+        self.y = y
+        self.func = func
+        self.color = color
+        
+    def get_dist(self, px, py):
+        return ((self.x-px)**2 + (self.y-py)**2)**(1/2)
+    
+    def check(self, px, py):
+        if self.get_dist(px, py) <= self.radius:
+            self.func()
+            
+    def draw(self, scr):
+        pyg.draw.circle(scr, self.color, (self.x, self.y), self.radius)
