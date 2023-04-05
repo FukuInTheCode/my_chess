@@ -38,10 +38,17 @@ class OpeningPuzzle(Game):
     def init(self):
         super().init()
 
-        self.is_turn = -1
+        self.is_turn = random.choice([1, -1])
         
         self.get_boards()
-        self.needed = random.choice(range(2, len(self.boards), 2))
+        
+        if self.is_turn == -1:
+            self.needed = random.choice(range(2, len(self.boards), 2))
+            
+        else:
+            self.needed = random.choice(range(1, len(self.boards), 2))
+            
+        
         self.board = self.boards[self.needed - 1].copy()
         
         self.load_data()
@@ -64,6 +71,7 @@ class OpeningPuzzle(Game):
             board.update()
             self.boards.append(board)
 
+
         file.close()
 
 
@@ -73,6 +81,7 @@ class OpeningPuzzle(Game):
         path = "./PGN/White" if self.is_turn == 1 else "./PGN/Black"
 
         folders = list(filter(lambda x: isdir(f"{path}\\{x}"), listdir(path)))
+
         game_type = random.choice(folders)
         
         path += "/" + game_type
@@ -117,9 +126,6 @@ class OpeningPuzzle(Game):
                 
             self.check_puzzle()
                 
-
-    
-  
         
     def save_data(self):
         try:

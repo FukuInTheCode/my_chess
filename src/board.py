@@ -102,9 +102,13 @@ class Board:
         
         for i in range(self.h):
             for j in range(self.w):
-                color = BLACK_SQUARE_COLOR if (i+j)%2 == 1 else WHITE_SQUARE_COLOR
+                
+                color = BLACK_SQUARE_COLOR if (i+j)%2 == 0 else WHITE_SQUARE_COLOR
                 
                 pyg.draw.rect(scr, color, (j*self.sq_w, i*self.sq_h, self.sq_w, self.sq_w))
+          
+        if self.last_moved is not None:      
+            self.last_moved.draw_last(scr, self.sq_w, self.sq_h)
         
         for piece in self.pieces:
             piece.draw(scr, self.sq_w, self.sq_h)
@@ -148,6 +152,10 @@ class Board:
             tmp.add(piece.copy())
             
         tmp.update()
+        
+        if self.last_moved is not None:
+        
+            tmp.last_moved = tmp.get_xy(*self.last_moved.get_xy())
         
         return tmp
             

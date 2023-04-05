@@ -65,16 +65,20 @@ class Pawn:
                 
     
     def draw(self, scr, sq_w, sq_h):
+        
         self.image = pyg.transform.scale(self.image, (sq_w, sq_h))
         scr.blit(self.image, ((self.x-1)*sq_w, (self.y-1)*sq_h))
         
-
     def draw_moves(self, scr, board):
         for x, y in self.get_faisable_position(board):
             if not board.in_check(*self.get_xy(), x, y, self.team):
                 pyg.draw.circle(scr, GRAY, ((x - 1 + 1/2)*board.sq_w, (y - 1 + 1/2)*board.sq_h), min(board.sq_w, board.sq_h)//10)
     
+
+    def draw_last(self, scr, sq_w, sq_h):
+        pyg.draw.rect(scr, DARK_YELLOW, ((self.x-1)*sq_w, (self.y-1)*sq_h, sq_w, sq_h))    
     
+        pyg.draw.rect(scr, LIGHT_YELLOW, (((self.x - self.last_move[0])-1)*sq_w, ((self.y - self.last_move[1])-1)*sq_h, sq_w, sq_h))
     def copy(self):
         tmp = self.copyclass(self.x, self.y, self.team)
         tmp.last_move = self.last_move
