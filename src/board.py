@@ -138,7 +138,6 @@ class Board:
             for m in piece.get_faisable_position(self):
                 if piece.team == team:
                     if not self.in_check(*piece.get_xy(), *m, piece.team):
-                        print(piece.get_xy(), m)
                         return False
                 
         return True

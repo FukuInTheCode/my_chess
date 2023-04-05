@@ -77,4 +77,4 @@ class Game:
         
     
     def subgame(self):
-        return
+        pass

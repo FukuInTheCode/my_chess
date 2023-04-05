@@ -37,7 +37,7 @@ class Engine:
                         self.game_type.leftclick(mou_x, mou_y)
                         
                     else:
-                        self.game_type.subgame()
+                        self.game_type.subgame(mou_x, mou_y)
                         
                     
                     

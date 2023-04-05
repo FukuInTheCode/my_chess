@@ -3,12 +3,15 @@ import chess.pgn as chess
 from os.path import isdir, isfile
 from os import listdir
 import random
+from CONSTANT import *
 import pickle
 import pygame as pyg
 from generate_pickle import ls, save_object
 
 
 random.seed()
+
+pygame.init()
 
 class OpeningPuzzle(Game):
     def __init__(self, scr_w: int, scr_h: int) -> None:
@@ -43,9 +46,6 @@ class OpeningPuzzle(Game):
         self.is_turn = -1
         
         self.get_boards()
-        
-        print(self.type)
-        
         self.needed = random.choice(range(2, len(self.boards), 2))
         self.boards[self.needed].print()
         self.board = self.boards[self.needed - 1]
@@ -53,9 +53,6 @@ class OpeningPuzzle(Game):
         self.load_data()
         
         self.did += 1
-        
-        print(self.score, self.did)
-        
     
     def get_boards(self):
         
@@ -78,13 +75,10 @@ class OpeningPuzzle(Game):
 
 
     def get_opening(self) -> tuple[str, tuple[str, str]]:
-        
-        
-        
+
         path = "./PGN/White" if self.is_turn == 1 else "./PGN/Black"
 
         folders = list(filter(lambda x: isdir(f"{path}\\{x}"), listdir(path)))
-        print(folders)
         game_type = random.choice(folders)
         
         path += "/" + game_type
@@ -132,38 +126,43 @@ class OpeningPuzzle(Game):
     def check_puzzle(self):
         if self.board.compare(self.boards[self.needed]):
             self.score += 1
-            
-        self.save_data()
         
         self.is_waiting = True
-        
+            
+        self.save_data()
     
-    def subgame(self):
-        super().subgame()
+    def subgame(self, mx, my):
         
-        if self.is_waiting:
-            pass
+        if not self.is_waiting:
+            return
+        
+        def dist(p1, p2):
+            return ((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)**(1/2)
+
+
+
+        if dist((mx, my), self.buttons['next']['center']) <= self.buttons['next']['radius']:
+            self.is_waiting = False
+            self.init()
 
         
     def save_data(self):
         try:
             with open('opdata.pickle', "rb") as f:
-                data = pickle.load(f)[self.is_turn]
+                data = pickle.load(f)
                 
-            if self.type[0] in data.keys():
-                if self.type[1] in data[self.type[0]].keys():
-                    data[self.type[0]][self.type[1]][0] = self.score
-                    data[self.type[0]][self.type[1]][1] = self.did
+            if self.type[0] in data[self.is_turn].keys():
+                if self.type[1] in data[self.is_turn][self.type[0]].keys():
+                    data[self.is_turn][self.type[0]][self.type[1]][0] = self.score
+                    data[self.is_turn][self.type[0]][self.type[1]][1] = self.did
                         
                 else:
-                    data[self.type[0]][self.type[1]] = [self.score, self.did]
+                    data[self.is_turn][self.type[0]][self.type[1]] = [self.score, self.did]
                     
             else:
-                data[self.type[0]] = {
+                data[self.is_turn][self.type[0]] = {
                     self.type[1]: [self.score, self.did]
                 }
-            
-            print('save', data)
             
                 
             with open("opdata.pickle", "wb") as f:
@@ -178,7 +177,6 @@ class OpeningPuzzle(Game):
         try:
             with open('opdata.pickle', "rb") as f:
                 data = pickle.load(f)[self.is_turn]
-                print('load', data)
                 if self.type[0] in data.keys():
                     data = data[self.type[0]]
                     if self.type[1] in data.keys():
@@ -197,3 +195,8 @@ class OpeningPuzzle(Game):
     
     def draw(self, scr: pyg.Surface) -> None:
         super().draw(scr)
+        font = pygame.font.Font('freesansbold.ttf', int(self.w//(len(self.type[0]) + len(self.type[1]) + 6 )))
+        text = font.render(f'{self.type[0]}, {self.type[1]} : {round(self.score/self.did * 100, 2)}%', True, GREEN, BLUE)
+        textRect = text.get_rect()
+        textRect.topleft = (0, self.h)
+        scr.blit(text, textRect)
