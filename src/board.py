@@ -1,6 +1,5 @@
 import pygame as pyg
 from CONSTANT import BLACK_SQUARE_COLOR, WHITE_SQUARE_COLOR
-from copy import deepcopy
 from pieces import Queen
 
 class Board:
@@ -187,4 +186,15 @@ class Board:
                     
             return True
         
-        return False          
+        return False 
+    
+    
+    def rotate(self):
+        for piece in self.pieces:
+            piece.x = self.w - piece.x + 1
+            piece.y = self.h - piece.y + 1
+            if piece.last_move is not None:
+                piece.last_move = tuple(map(lambda x: -x, piece.last_move))
+            piece.team *= -1
+        
+        self.update()

@@ -39,7 +39,8 @@ class Engine:
                     else:
                         self.game_type.subgame(mou_x, mou_y)
                         
-                    
-                    
+                if event.type == pyg.KEYDOWN and event.key == pyg.K_r:
+                    self.game_type.rotate()
+ 
                     
             pyg.display.flip()

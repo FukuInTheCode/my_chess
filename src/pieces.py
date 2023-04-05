@@ -34,7 +34,7 @@ class Pawn:
         if board.check_xy(*moves[0]) and board.is_xy_none(*moves[0]):
             tmp.append(moves[0])
             
-            if board.check_xy(*moves[1]) and self.y == starting_pos and board.is_xy_none(*moves[0]):
+            if board.check_xy(*moves[1]) and self.y == starting_pos and board.is_xy_none(*moves[1]):
                 tmp.append(moves[1])
                 
         for m in (moves[2], moves[3]):

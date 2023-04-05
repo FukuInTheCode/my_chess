@@ -54,6 +54,9 @@ class OpeningPuzzle(Game):
         self.load_data()
         
         self.did += 1
+        
+        if self.is_turn == 1:
+            self.rotate()
     
     def get_boards(self):
         
@@ -189,7 +192,10 @@ class OpeningPuzzle(Game):
             tmp = textRect.h+(self.h/0.9)*0.01
             scr.blit(text, textRect)
             
-            
+    def rotate(self):
+        super().rotate()
+        for bd in self.boards:
+            bd.rotate()
             
     def check_puzzle(self):
         if self.board.compare(self.boards[self.needed]):
@@ -225,3 +231,4 @@ class OpeningPuzzle(Game):
         
     def see_answ(self):
         self.board = self.boards[self.needed].copy()
+        

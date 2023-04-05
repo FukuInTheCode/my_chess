@@ -39,8 +39,6 @@ class Game:
         self.board.add(Knight(7, 1, 1))
         self.board.add(Knight(2, 8, -1))
         
-        
-        
         for piece in self.board.pieces:
             self.board.set_to(piece)
         
@@ -79,6 +77,10 @@ class Game:
     def subgame(self):
         pass
     
+    
+    def rotate(self):
+        self.board.rotate()
+        self.is_turn *= -1
     
         
 class Button():
