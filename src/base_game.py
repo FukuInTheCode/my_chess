@@ -5,13 +5,15 @@ from pieces import *
 
 class Game:
     def __init__(self, scr_w:int, scr_h:int) -> None:
-        self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, scr_w, scr_h)
+        self.w, self.h = (min(scr_w, scr_h) for i in range(2))
         self.name = 'Chess Game'
         self.clicked = None
         self.is_turn = 1
-        self.init_pieces()
+        self.buttons = []
+        self.init()
         
-    def init_pieces(self):
+    def init(self):
+        self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, self.w, self.h)
         for i in range(1, 9):
             self.board.add(Pawn(i, 2, 1))
             self.board.add(Pawn(i, 7, -1))
@@ -46,8 +48,11 @@ class Game:
         self.board.draw(scr)
         if self.clicked != None:
             self.clicked.draw_moves(scr, self.board)
+            
+        for btn in self.buttons:
+            btn.draw(scr)
         
-    def rightclick(self, mx:int, my:int) -> None:
+    def leftclick(self, mx:int, my:int) -> None:
         mx = mx//self.board.sq_w + 1
         my = my//self.board.sq_h + 1
         
@@ -69,3 +74,27 @@ class Game:
                 
     def checkmate(self, winner):
         print('Winner is '+ ('White' if winner == 1 else 'Black'))
+        
+    
+    def subgame(self):
+        pass
+    
+    
+        
+class Button():
+    def __init__(self, x, y, radius, color, func) -> None:
+        self.radius = radius
+        self.x = x
+        self.y = y
+        self.func = func
+        self.color = color
+        
+    def get_dist(self, px, py):
+        return ((self.x-px)**2 + (self.y-py)**2)**(1/2)
+    
+    def check(self, px, py):
+        if self.get_dist(px, py) <= self.radius:
+            self.func()
+            
+    def draw(self, scr):
+        pyg.draw.circle(scr, self.color, (self.x, self.y), self.radius)

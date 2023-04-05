@@ -1,6 +1,7 @@
 import pygame as pyg
 from CONSTANT import BLACK_SQUARE_COLOR, WHITE_SQUARE_COLOR
 from copy import deepcopy
+from pieces import Queen
 
 class Board:
     def __init__(self, w:int, h:int, scr_w:int, scr_h:int) -> None:
@@ -62,6 +63,16 @@ class Board:
             if tox - x != 0:
                 self.pieces.remove(self.get_xy(tox, y))
                 
+        if self.last_moved.type == 'P' and self.last_moved.y == (8 if self.last_moved.team == 1 else 1):
+            q = Queen(*self.last_moved.get_xy(), self.last_moved.team)
+            q.last_move = self.last_moved.last_move
+            q.has_moved = self.last_moved.has_moved
+            self.pieces.remove(self.last_moved)
+            self.add(q)
+            self.last_moved = q
+            
+            
+                
         if self.last_moved.type == 'K' and (tox - x != 0 or tox - x != 1 or tox - x != -1):
             if tox - x == 2:
                 for i in range(tox, self.w + 1):
@@ -89,7 +100,7 @@ class Board:
     
     def draw(self, scr) -> None:
         
-        for i in range(self.h+1):
+        for i in range(self.h):
             for j in range(self.w):
                 color = BLACK_SQUARE_COLOR if (i+j)%2 == 1 else WHITE_SQUARE_COLOR
                 
@@ -121,20 +132,12 @@ class Board:
                 
         return False
     
-    def is_attacked(self, x, y, team):
-        for piece in self.pieces:
-            if piece.team != team and (x, y) in piece.get_faisable_position(self):
-                return True
-            
-        return False
-    
 
     def in_checkmate(self, team):
         for piece in self.pieces:
             for m in piece.get_faisable_position(self):
                 if piece.team == team:
                     if not self.in_check(*piece.get_xy(), *m, piece.team):
-                        print(piece.get_xy(), m)
                         return False
                 
         return True
@@ -148,3 +151,32 @@ class Board:
         
         return tmp
             
+            
+    def print(self):
+        for line in self.board:
+            for square in line:
+                if square is None:
+                    print(' ', end=' ')
+                    
+                else:
+                    print(square.type, end=' ')
+                    
+            print()
+            
+    
+    def compare(self, board):
+        if self.w == board.w and self.h and board.h:
+            for y in range(1, self.h + 1):
+                for x in range(1, self.w+1):
+                    if self.is_xy_none(x, y) != board.is_xy_none(x, y):
+                        return False
+                    
+                    elif self.is_xy_none(x, y) and  board.is_xy_none(x, y):
+                        continue
+                    
+                    elif self.get_xy(x, y).type != board.get_xy(x, y).type or self.get_xy(x, y).team != board.get_xy(x, y).team or self.get_xy(x, y).last_move != board.get_xy(x, y).last_move:
+                        return False   
+                    
+            return True
+        
+        return False          
