@@ -38,7 +38,7 @@ class OpeningPuzzle(Game):
     def init(self):
         super().init()
 
-        self.is_turn = random.choice([1, -1])
+        self.is_turn = self.op_side = random.choice([1, -1])
         
         self.get_boards()
         
@@ -80,7 +80,6 @@ class OpeningPuzzle(Game):
 
 
     def get_opening(self) -> tuple[str, tuple[str, str]]:
-
         path = "./PGN/White" if self.is_turn == 1 else "./PGN/Black"
 
         folders = list(filter(lambda x: isdir(f"{path}\\{x}"), listdir(path)))
@@ -134,17 +133,18 @@ class OpeningPuzzle(Game):
         try:
             with open('opdata.pickle', "rb") as f:
                 data = pickle.load(f)
-                
-            if self.type[0] in data[self.is_turn].keys():
-                if self.type[1] in data[self.is_turn][self.type[0]].keys():
-                    data[self.is_turn][self.type[0]][self.type[1]][0] = self.score
-                    data[self.is_turn][self.type[0]][self.type[1]][1] = self.did
+            
+            if self.type[0] in data[self.op_side].keys():
+                if self.type[1] in data[self.op_side][self.type[0]].keys():
+                    
+                    data[self.op_side][self.type[0]][self.type[1]][0] = self.score
+                    data[self.op_side][self.type[0]][self.type[1]][1] = self.did
                         
                 else:
-                    data[self.is_turn][self.type[0]][self.type[1]] = [self.score, self.did]
+                    data[self.op_side][self.type[0]][self.type[1]] = [self.score, self.did]
                     
             else:
-                data[self.is_turn][self.type[0]] = {
+                data[self.op_side][self.type[0]] = {
                     self.type[1]: [self.score, self.did]
                 }
             
@@ -160,7 +160,7 @@ class OpeningPuzzle(Game):
     def load_data(self):
         try:
             with open('opdata.pickle', "rb") as f:
-                data = pickle.load(f)[self.is_turn]
+                data = pickle.load(f)[self.op_side]
                 if self.type[0] in data.keys():
                     data = data[self.type[0]]
                     if self.type[1] in data.keys():
