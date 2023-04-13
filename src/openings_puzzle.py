@@ -37,45 +37,35 @@ class OpeningPuzzle(Game):
 
     def init(self):
         super().init()
-
-        self.is_turn = self.op_side = random.choice([1, -1])
         
-        self.get_boards()
+        self.choice_board()
         
-        if self.is_turn == -1:
-            self.needed = random.choice(range(2, len(self.boards), 2))
-            
-        else:
-            self.needed = random.choice(range(1, len(self.boards), 2))
-            
-        
-        self.board = self.boards[self.needed - 1].copy()
-        
+                
         self.load_data()
         
-        self.did += 1
+
         
-        if self.is_turn == 1:
-            self.rotate()
     
-    def get_boards(self):
+    def get_boards(self, op):
         
-        path = self.get_opening()
+        path = op
         
         file = open(path, 'r')
         pgn = chess.read_game(file)
         
-        self.boards = [self.board.copy()]
+        boards = [self.board.copy()]
         
         for move in pgn.mainline_moves():
             move = str(move)
-            board = self.boards[-1].copy()
+            board = boards[-1].copy()
             board.move(*(ord(move[:2][0])-96, int(move[:2][1])), *(ord(move[2:][0])-96, int(move[2:][1])))
             board.update()
-            self.boards.append(board)
+            boards.append(board)
 
 
         file.close()
+        
+        return boards
 
 
 
@@ -100,6 +90,40 @@ class OpeningPuzzle(Game):
         self.type = (game_type, op_type)
         
         return path + "/" + op_variation
+    
+    
+    def choice_board(self):
+        self.is_turn = self.op_side = random.choice([1, -1])
+
+        
+        self.boards = self.get_boards(self.get_opening())
+        
+        
+        
+        path =( "./PGN/White" if self.is_turn == 1 else "./PGN/Black") + "/" +  self.type[0] + "/" +  self.type[1] + "/base"
+        base = self.get_boards(path)
+        
+        if len(base) == len(self.boards):
+            if self.is_turn == -1:
+                self.needed = random.choice(range(2, len(self.boards), 2))
+                
+            else:
+                self.needed = random.choice(range(1, len(self.boards), 2))
+                
+        else:
+            if self.is_turn == -1:
+                self.needed = random.choice(range(len(base)+1, len(self.boards), 2))
+                
+            else:
+                self.needed = random.choice(range(len(base), len(self.boards), 2))
+            
+        
+        self.board = self.boards[self.needed - 1].copy()
+
+        self.did += 1
+        
+        if self.is_turn == 1:
+            self.rotate()
         
     
         
