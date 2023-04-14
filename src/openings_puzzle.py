@@ -39,12 +39,11 @@ class OpeningPuzzle(Game):
         super().init()
         
         self.choice_board()
-        
-                
-        self.load_data()
-        
 
-        
+        if self.is_turn == 1:
+            self.rotate()
+
+        self.load_data()
     
     def get_boards(self, op):
         
@@ -120,11 +119,6 @@ class OpeningPuzzle(Game):
         
         self.board = self.boards[self.needed - 1].copy()
 
-        self.did += 1
-        
-        if self.is_turn == 1:
-            self.rotate()
-        
     
         
     def leftclick(self, mx: int, my: int) -> None:
@@ -204,7 +198,7 @@ class OpeningPuzzle(Game):
     def draw(self, scr: pyg.Surface) -> None:
         super().draw(scr)
         txts = [
-            f'{self.type[0]}, {self.type[1]} : {round(self.score/self.did * 100, 2)}%',
+            f'{self.type[0]}, {self.type[1]} : {round(self.score/(self.did if self.did != 0 else 1) * 100, 2)}%',
             f'Current streak: {self.streak}'
         ]
         tmp = 0
@@ -224,12 +218,15 @@ class OpeningPuzzle(Game):
     def check_puzzle(self):
         if self.board.compare(self.boards[self.needed]):
             self.score += 1
-            self.streak += 1 
+
+            self.streak += 1
             
         else:
             self.streak = 0
         
         self.is_waiting = True
+        
+        self.did += 1
             
         self.save_data()
         
@@ -250,7 +247,6 @@ class OpeningPuzzle(Game):
     def redo(self):
         self.is_waiting = False
         self.board = self.boards[self.needed-1].copy()
-        self.did += 1
         self.streak = 0
         
     def see_answ(self):
