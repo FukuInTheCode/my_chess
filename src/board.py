@@ -18,7 +18,17 @@ class Board:
         self.pieces = []
         
     def get_xy(self, x:int, y:int):
-        return self.board[y-1][x-1]
+        
+        y -= 1
+        x -= 1
+        
+        if y>=self.h:
+            y = self.h - 1
+        
+        if x >= self.w:
+            x = self.w - 1
+        
+        return self.board[y][x]
     
     def get_piece(self, type, team):
         tmp = []

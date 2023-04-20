@@ -1,6 +1,7 @@
 import pygame as pyg
 from base_game import Game
 from openings_puzzle import OpeningPuzzle
+from bot import Bot
 from CONSTANT import BLACK
 
 class Engine:

@@ -42,7 +42,7 @@ class Game:
         for piece in self.board.pieces:
             self.board.set_to(piece)
         
-    def draw(self, scr:pyg.Surface) -> None:
+    def draw(self, scr) -> None:
         self.board.draw(scr)
         if self.clicked != None:
             self.clicked.draw_moves(scr, self.board)

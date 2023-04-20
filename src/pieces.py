@@ -92,7 +92,7 @@ class Queen(Pawn):
     def __init__(self, x: int, y: int, team: int) -> None:
         super().__init__(x, y, team)
         self.type = 'Q'
-        self.point = 9
+        self.point = 9*self.team
         self.copyclass = Queen
         
     def get_possible_ds_moves(self) -> list:
@@ -137,7 +137,7 @@ class Rook(Pawn):
     def __init__(self, x: int, y: int, team: int) -> None:
         super().__init__(x, y, team)
         self.type = 'R'
-        self.point = 5
+        self.point = 5*self.team
         self.copyclass = Rook
         
     def get_possible_ds_moves(self) -> list:
@@ -181,7 +181,7 @@ class Bishop(Pawn):
     def __init__(self, x: int, y: int, team: int) -> None:
         super().__init__(x, y, team)
         self.type = 'B'
-        self.point = 3
+        self.point = 3*self.team
         self.copyclass = Bishop
         
     def get_possible_ds_moves(self) -> list:
@@ -226,7 +226,7 @@ class Knight(Pawn):
     def __init__(self, x: int, y: int, team: int) -> None:
         super().__init__(x, y, team)
         self.type = 'N'
-        self.point = 3
+        self.point = 3*self.team
         self.copyclass = Knight
         
     def get_possible_ds_moves(self) -> list:
