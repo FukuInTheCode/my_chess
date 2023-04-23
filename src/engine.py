@@ -7,7 +7,7 @@ from CONSTANT import BLACK
 class Engine:
     def __init__(self, scr: pyg.Surface) -> None:
         tmp = scr.get_size()
-        self.game_type = OpeningPuzzle(tmp[0]*0.90, tmp[1]*0.90)
+        self.game_type = Game(tmp[0]*0.90, tmp[1]*0.90)
         self.screen = scr
         self.is_running = True
         
@@ -40,8 +40,14 @@ class Engine:
                     else:
                         self.game_type.subgame(mou_x, mou_y)
                         
-                if event.type == pyg.KEYDOWN and event.key == pyg.K_r:
+                elif event.type == pyg.KEYDOWN and event.key == pyg.K_r:
                     self.game_type.rotate()
+                    
+                elif event.type == pyg.KEYDOWN and event.key == pyg.K_LEFT:
+                    self.game_type.K_left()
+                    
+                elif event.type == pyg.KEYDOWN and event.key == pyg.K_RIGHT:
+                    self.game_type.K_right()
  
                     
             pyg.display.flip()

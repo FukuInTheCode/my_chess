@@ -7,6 +7,7 @@ from CONSTANT import *
 import pickle
 import pygame as pyg
 from generate_pickle import ls, save_object
+from func import size_getting
 
 
 random.seed()
@@ -69,16 +70,37 @@ class OpeningPuzzle(Game):
 
 
     def get_opening(self) -> tuple[str, tuple[str, str]]:
-        path = "./PGN/White" if self.is_turn == 1 else "./PGN/Black"
+        
+        folders = ["./PGN/White", "./PGN/Black"]
+        
+        path_weights = [size_getting("./PGN/White"), size_getting("./PGN/Black")]
+        
+        path = random.choices(folders, [weight/sum(path_weights) for weight in path_weights])[0]
+        
+        if path == "./PGN/White":
+            self.op_side = self.is_turn = 1
+        else:
+            self.op_side = self.is_turn = -1
+        
 
         folders = list(filter(lambda x: isdir(f"{path}\\{x}"), listdir(path)))
 
-        game_type = random.choice(folders)
+        path_weights = []
+        for f in folders:
+            path_weights.append(size_getting(path + "/" + f))
+
+        game_type = random.choices(folders, [weight/sum(path_weights) for weight in path_weights])[0]
         
         path += "/" + game_type
         
         folders = list(filter(lambda x: isdir(f"{path}\\{x}"), listdir(path)))
-        op_type = random.choice(folders)
+        
+        path_weights = []
+        for f in folders:
+            path_weights.append(size_getting(path + "/" + f))
+
+        
+        op_type = random.choices(folders, [weight/sum(path_weights) for weight in path_weights])[0]
          
         path += "/" + op_type
         
@@ -92,12 +114,9 @@ class OpeningPuzzle(Game):
     
     
     def choice_board(self):
-        self.is_turn = self.op_side = random.choice([1, -1])
-
         
         self.boards = self.get_boards(self.get_opening())
-        
-        
+
         
         path =( "./PGN/White" if self.is_turn == 1 else "./PGN/Black") + "/" +  self.type[0] + "/" +  self.type[1] + "/base"
         base = self.get_boards(path)
@@ -251,4 +270,3 @@ class OpeningPuzzle(Game):
         
     def see_answ(self):
         self.board = self.boards[self.needed].copy()
-        
