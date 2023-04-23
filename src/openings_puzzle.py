@@ -137,6 +137,8 @@ class OpeningPuzzle(Game):
             
         
         self.board = self.boards[self.needed - 1].copy()
+        
+        self.current = self.showed = self.needed - 1
 
     
         

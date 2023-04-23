@@ -7,7 +7,7 @@ from CONSTANT import BLACK
 class Engine:
     def __init__(self, scr: pyg.Surface) -> None:
         tmp = scr.get_size()
-        self.game_type = Game(tmp[0]*0.90, tmp[1]*0.90)
+        self.game_type = OpeningPuzzle(tmp[0]*0.90, tmp[1]*0.90)
         self.screen = scr
         self.is_running = True
         
