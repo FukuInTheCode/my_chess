@@ -51,6 +51,9 @@ class OpeningPuzzle(Game):
         path = op
         
         file = open(path, 'r')
+
+        print(self.type)
+        
         pgn = chess.read_game(file)
         
         boards = [self.board.copy()]
@@ -144,6 +147,9 @@ class OpeningPuzzle(Game):
         
     def leftclick(self, mx: int, my: int) -> None:
         
+        if self.current != self.showed:
+            return
+        
         if self.is_waiting:
             return
         
@@ -161,7 +167,7 @@ class OpeningPuzzle(Game):
             self.board.move(*tmp.get_xy(), mx, my)
             self.clicked = None
             self.board.update()
-                        
+            self.current += 1
             if self.board.in_checkmate(self.is_turn):
                 self.checkmate(self.is_turn*-1)
                 
@@ -230,11 +236,7 @@ class OpeningPuzzle(Game):
             textRect.topleft = (0, self.h + tmp)
             tmp = textRect.h+(self.h/0.9)*0.01
             scr.blit(text, textRect)
-            
-    def rotate(self):
-        super().rotate()
-        for bd in self.boards:
-            bd.rotate()
+
             
     def check_puzzle(self):
         if self.board.compare(self.boards[self.needed]):
@@ -272,3 +274,4 @@ class OpeningPuzzle(Game):
         
     def see_answ(self):
         self.board = self.boards[self.needed].copy()
+        
