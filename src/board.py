@@ -1,6 +1,5 @@
 import pygame as pyg
 from CONSTANT import BLACK_SQUARE_COLOR, WHITE_SQUARE_COLOR
-from copy import deepcopy
 from pieces import Queen
 
 class Board:
@@ -19,7 +18,17 @@ class Board:
         self.pieces = []
         
     def get_xy(self, x:int, y:int):
-        return self.board[y-1][x-1]
+        
+        y -= 1
+        x -= 1
+        
+        if y>=self.h:
+            y = self.h - 1
+        
+        if x >= self.w:
+            x = self.w - 1
+        
+        return self.board[y][x]
     
     def get_piece(self, type, team):
         tmp = []
@@ -102,9 +111,13 @@ class Board:
         
         for i in range(self.h):
             for j in range(self.w):
-                color = BLACK_SQUARE_COLOR if (i+j)%2 == 1 else WHITE_SQUARE_COLOR
+                
+                color = BLACK_SQUARE_COLOR if (i+j)%2 == 0 else WHITE_SQUARE_COLOR
                 
                 pyg.draw.rect(scr, color, (j*self.sq_w, i*self.sq_h, self.sq_w, self.sq_w))
+          
+        if self.last_moved is not None:      
+            self.last_moved.draw_last(scr, self.sq_w, self.sq_h)
         
         for piece in self.pieces:
             piece.draw(scr, self.sq_w, self.sq_h)
@@ -149,6 +162,10 @@ class Board:
             
         tmp.update()
         
+        if self.last_moved is not None:
+        
+            tmp.last_moved = tmp.get_xy(*self.last_moved.get_xy())
+        
         return tmp
             
             
@@ -179,4 +196,15 @@ class Board:
                     
             return True
         
-        return False          
+        return False 
+    
+    
+    def rotate(self):
+        for piece in self.pieces:
+            piece.x = self.w - piece.x + 1
+            piece.y = self.h - piece.y + 1
+            if piece.last_move is not None:
+                piece.last_move = tuple(map(lambda x: -x, piece.last_move))
+            piece.team *= -1
+        
+        self.update()

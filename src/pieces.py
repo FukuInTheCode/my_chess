@@ -6,7 +6,7 @@ class Pawn:
         self.copyclass = Pawn
         self.x = x
         self.y = y
-        self.team = int(team//abs(team))
+        self._team = self.team = int(team//abs(team))
         self.type = 'P'
         self.point = 1*self.team
         self.last_move = None
@@ -34,7 +34,7 @@ class Pawn:
         if board.check_xy(*moves[0]) and board.is_xy_none(*moves[0]):
             tmp.append(moves[0])
             
-            if board.check_xy(*moves[1]) and self.y == starting_pos and board.is_xy_none(*moves[0]):
+            if board.check_xy(*moves[1]) and self.y == starting_pos and board.is_xy_none(*moves[1]):
                 tmp.append(moves[1])
                 
         for m in (moves[2], moves[3]):
@@ -48,7 +48,7 @@ class Pawn:
         return tmp
     
     def set_image(self):
-        if self.team == 1:
+        if self._team == 1:
             self.image = pyg.image.load('assets\whitepiece\whitePawn.png')
             
         else:
@@ -65,20 +65,25 @@ class Pawn:
                 
     
     def draw(self, scr, sq_w, sq_h):
+        
         self.image = pyg.transform.scale(self.image, (sq_w, sq_h))
         scr.blit(self.image, ((self.x-1)*sq_w, (self.y-1)*sq_h))
         
-
     def draw_moves(self, scr, board):
         for x, y in self.get_faisable_position(board):
             if not board.in_check(*self.get_xy(), x, y, self.team):
                 pyg.draw.circle(scr, GRAY, ((x - 1 + 1/2)*board.sq_w, (y - 1 + 1/2)*board.sq_h), min(board.sq_w, board.sq_h)//10)
     
+
+    def draw_last(self, scr, sq_w, sq_h):
+        pyg.draw.rect(scr, DARK_YELLOW, ((self.x-1)*sq_w, (self.y-1)*sq_h, sq_w, sq_h))    
     
+        pyg.draw.rect(scr, LIGHT_YELLOW, (((self.x - self.last_move[0])-1)*sq_w, ((self.y - self.last_move[1])-1)*sq_h, sq_w, sq_h))
     def copy(self):
-        tmp = self.copyclass(self.x, self.y, self.team)
+        tmp = self.copyclass(self.x, self.y, self._team)
         tmp.last_move = self.last_move
         tmp.has_moved = self.has_moved
+        tmp.team = self.team
         return tmp
             
             
@@ -87,7 +92,7 @@ class Queen(Pawn):
     def __init__(self, x: int, y: int, team: int) -> None:
         super().__init__(x, y, team)
         self.type = 'Q'
-        self.point = 9
+        self.point = 9*self.team
         self.copyclass = Queen
         
     def get_possible_ds_moves(self) -> list:
@@ -119,7 +124,7 @@ class Queen(Pawn):
     
 
     def set_image(self):
-        if self.team == 1:
+        if self._team == 1:
             self.image = pyg.image.load('assets\whitepiece\whiteQueen.png')
             
         else:
@@ -132,7 +137,7 @@ class Rook(Pawn):
     def __init__(self, x: int, y: int, team: int) -> None:
         super().__init__(x, y, team)
         self.type = 'R'
-        self.point = 5
+        self.point = 5*self.team
         self.copyclass = Rook
         
     def get_possible_ds_moves(self) -> list:
@@ -164,7 +169,7 @@ class Rook(Pawn):
     
 
     def set_image(self):
-        if self.team == 1:
+        if self._team == 1:
             self.image = pyg.image.load('assets\whitepiece\whiteRook.png')
             
         else:
@@ -176,7 +181,7 @@ class Bishop(Pawn):
     def __init__(self, x: int, y: int, team: int) -> None:
         super().__init__(x, y, team)
         self.type = 'B'
-        self.point = 3
+        self.point = 3*self.team
         self.copyclass = Bishop
         
     def get_possible_ds_moves(self) -> list:
@@ -208,7 +213,7 @@ class Bishop(Pawn):
     
 
     def set_image(self):
-        if self.team == 1:
+        if self._team == 1:
             self.image = pyg.image.load('assets\whitepiece\whiteBishop.png')
             
         else:
@@ -221,7 +226,7 @@ class Knight(Pawn):
     def __init__(self, x: int, y: int, team: int) -> None:
         super().__init__(x, y, team)
         self.type = 'N'
-        self.point = 3
+        self.point = 3*self.team
         self.copyclass = Knight
         
     def get_possible_ds_moves(self) -> list:
@@ -245,7 +250,7 @@ class Knight(Pawn):
     
 
     def set_image(self):
-        if self.team == 1:
+        if self._team == 1:
             self.image = pyg.image.load('assets\whitepiece\whiteKnight.png')
             
         else:
@@ -304,7 +309,7 @@ class King(Pawn):
     
 
     def set_image(self):
-        if self.team == 1:
+        if self._team == 1:
             self.image = pyg.image.load('assets\whitepiece\whiteKing.png')
             
         else:

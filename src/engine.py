@@ -1,6 +1,7 @@
 import pygame as pyg
 from base_game import Game
 from openings_puzzle import OpeningPuzzle
+from bot import Bot
 from CONSTANT import BLACK
 
 class Engine:
@@ -39,7 +40,14 @@ class Engine:
                     else:
                         self.game_type.subgame(mou_x, mou_y)
                         
+                elif event.type == pyg.KEYDOWN and event.key == pyg.K_r:
+                    self.game_type.rotate()
                     
+                elif event.type == pyg.KEYDOWN and event.key == pyg.K_LEFT:
+                    self.game_type.K_left()
                     
+                elif event.type == pyg.KEYDOWN and event.key == pyg.K_RIGHT:
+                    self.game_type.K_right()
+ 
                     
             pyg.display.flip()

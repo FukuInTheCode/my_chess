@@ -10,9 +10,12 @@ class Game:
         self.clicked = None
         self.is_turn = 1
         self.buttons = []
+        self.current = 0
+        self.showed = 0
         self.init()
         
     def init(self):
+        self.boards = []
         self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, self.w, self.h)
         for i in range(1, 9):
             self.board.add(Pawn(i, 2, 1))
@@ -39,12 +42,12 @@ class Game:
         self.board.add(Knight(7, 1, 1))
         self.board.add(Knight(2, 8, -1))
         
-        
+        self.boards.append(self.board.copy())
         
         for piece in self.board.pieces:
             self.board.set_to(piece)
         
-    def draw(self, scr:pyg.Surface) -> None:
+    def draw(self, scr) -> None:
         self.board.draw(scr)
         if self.clicked != None:
             self.clicked.draw_moves(scr, self.board)
@@ -53,6 +56,10 @@ class Game:
             btn.draw(scr)
         
     def leftclick(self, mx:int, my:int) -> None:
+        
+        if self.current != self.showed:
+            return
+        
         mx = mx//self.board.sq_w + 1
         my = my//self.board.sq_h + 1
         
@@ -68,6 +75,9 @@ class Game:
             self.board.move(*tmp.get_xy(), mx, my)
             self.clicked = None
             self.board.update()
+            self.boards.append(self.board.copy())
+            self.current += 1
+            self.showed = self.current
             if self.board.in_checkmate(self.is_turn):
                 self.checkmate(self.is_turn*-1)
                 
@@ -79,6 +89,29 @@ class Game:
     def subgame(self):
         pass
     
+    
+    def rotate(self):
+        self.board.rotate()
+        for bd in self.boards:
+            bd.rotate()
+        self.is_turn *= -1
+        
+            
+    def K_left(self):
+        if self.showed == 0:
+            return
+        
+        self.showed -= 1
+        
+        self.board = self.boards[self.showed].copy()
+        
+    def K_right(self):
+        if self.showed == self.current:
+            return
+        
+        self.showed += 1
+        
+        self.board = self.boards[self.showed].copy()
     
         
 class Button():
@@ -98,3 +131,4 @@ class Button():
             
     def draw(self, scr):
         pyg.draw.circle(scr, self.color, (self.x, self.y), self.radius)
+        

@@ -7,6 +7,7 @@ from CONSTANT import *
 import pickle
 import pygame as pyg
 from generate_pickle import ls, save_object
+from func import size_getting
 
 
 random.seed()
@@ -37,48 +38,72 @@ class OpeningPuzzle(Game):
 
     def init(self):
         super().init()
+        
+        self.choice_board()
 
-        self.is_turn = -1
-        
-        self.get_boards()
-        self.needed = random.choice(range(2, len(self.boards), 2))
-        self.board = self.boards[self.needed - 1].copy()
-        
+        if self.is_turn == 1:
+            self.rotate()
+
         self.load_data()
-        
-        self.did += 1
     
-    def get_boards(self):
+    def get_boards(self, op):
         
-        path = self.get_opening()
+        path = op
         
         file = open(path, 'r')
+
+        print(self.type)
+        
         pgn = chess.read_game(file)
         
-        self.boards = [self.board.copy()]
+        boards = [self.board.copy()]
         
         for move in pgn.mainline_moves():
             move = str(move)
-            board = self.boards[-1].copy()
+            board = boards[-1].copy()
             board.move(*(ord(move[:2][0])-96, int(move[:2][1])), *(ord(move[2:][0])-96, int(move[2:][1])))
             board.update()
-            self.boards.append(board)
+            boards.append(board)
+
 
         file.close()
+        
+        return boards
 
 
 
     def get_opening(self) -> tuple[str, tuple[str, str]]:
-
-        path = "./PGN/White" if self.is_turn == 1 else "./PGN/Black"
+        
+        folders = ["./PGN/White", "./PGN/Black"]
+        
+        path_weights = [size_getting("./PGN/White"), size_getting("./PGN/Black")]
+        
+        path = random.choices(folders, [weight/sum(path_weights) for weight in path_weights])[0]
+        
+        if path == "./PGN/White":
+            self.op_side = self.is_turn = 1
+        else:
+            self.op_side = self.is_turn = -1
+        
 
         folders = list(filter(lambda x: isdir(f"{path}\\{x}"), listdir(path)))
-        game_type = random.choice(folders)
+
+        path_weights = []
+        for f in folders:
+            path_weights.append(size_getting(path + "/" + f))
+
+        game_type = random.choices(folders, [weight/sum(path_weights) for weight in path_weights])[0]
         
         path += "/" + game_type
         
         folders = list(filter(lambda x: isdir(f"{path}\\{x}"), listdir(path)))
-        op_type = random.choice(folders)
+        
+        path_weights = []
+        for f in folders:
+            path_weights.append(size_getting(path + "/" + f))
+
+        
+        op_type = random.choices(folders, [weight/sum(path_weights) for weight in path_weights])[0]
          
         path += "/" + op_type
         
@@ -89,10 +114,32 @@ class OpeningPuzzle(Game):
         self.type = (game_type, op_type)
         
         return path + "/" + op_variation
+    
+    
+    def choice_board(self):
         
+        self.boards = self.get_boards(self.get_opening())
+
+        
+        path =( "./PGN/White" if self.is_turn == 1 else "./PGN/Black") + "/" +  self.type[0] + "/" +  self.type[1] + "/base"
+        base = self.get_boards(path)
+        
+        if len(base) == len(self.boards):
+            self.needed = random.choice(range(int(2.5 + self.op_side/2), len(self.boards), 2))
+                
+        else: 
+            self.needed = random.choice(range(len(base)+1, len(self.boards), 2))
+        
+        self.board = self.boards[self.needed - 1].copy()
+        
+        self.current = self.showed = self.needed - 1
+
     
         
     def leftclick(self, mx: int, my: int) -> None:
+        
+        if self.current != self.showed:
+            return
         
         if self.is_waiting:
             return
@@ -111,31 +158,29 @@ class OpeningPuzzle(Game):
             self.board.move(*tmp.get_xy(), mx, my)
             self.clicked = None
             self.board.update()
-                        
+            self.current += 1
             if self.board.in_checkmate(self.is_turn):
                 self.checkmate(self.is_turn*-1)
                 
             self.check_puzzle()
                 
-
-    
-  
         
     def save_data(self):
         try:
             with open('opdata.pickle', "rb") as f:
                 data = pickle.load(f)
-                
-            if self.type[0] in data[self.is_turn].keys():
-                if self.type[1] in data[self.is_turn][self.type[0]].keys():
-                    data[self.is_turn][self.type[0]][self.type[1]][0] = self.score
-                    data[self.is_turn][self.type[0]][self.type[1]][1] = self.did
+            
+            if self.type[0] in data[self.op_side].keys():
+                if self.type[1] in data[self.op_side][self.type[0]].keys():
+                    
+                    data[self.op_side][self.type[0]][self.type[1]][0] = self.score
+                    data[self.op_side][self.type[0]][self.type[1]][1] = self.did
                         
                 else:
-                    data[self.is_turn][self.type[0]][self.type[1]] = [self.score, self.did]
+                    data[self.op_side][self.type[0]][self.type[1]] = [self.score, self.did]
                     
             else:
-                data[self.is_turn][self.type[0]] = {
+                data[self.op_side][self.type[0]] = {
                     self.type[1]: [self.score, self.did]
                 }
             
@@ -151,7 +196,7 @@ class OpeningPuzzle(Game):
     def load_data(self):
         try:
             with open('opdata.pickle', "rb") as f:
-                data = pickle.load(f)[self.is_turn]
+                data = pickle.load(f)[self.op_side]
                 if self.type[0] in data.keys():
                     data = data[self.type[0]]
                     if self.type[1] in data.keys():
@@ -171,7 +216,7 @@ class OpeningPuzzle(Game):
     def draw(self, scr: pyg.Surface) -> None:
         super().draw(scr)
         txts = [
-            f'{self.type[0]}, {self.type[1]} : {round(self.score/self.did * 100, 2)}%',
+            f'{self.type[0]}, {self.type[1]} : {round(self.score/(self.did if self.did != 0 else 1) * 100, 2)}%',
             f'Current streak: {self.streak}'
         ]
         tmp = 0
@@ -182,18 +227,20 @@ class OpeningPuzzle(Game):
             textRect.topleft = (0, self.h + tmp)
             tmp = textRect.h+(self.h/0.9)*0.01
             scr.blit(text, textRect)
-            
-            
+
             
     def check_puzzle(self):
         if self.board.compare(self.boards[self.needed]):
             self.score += 1
-            self.streak += 1 
+
+            self.streak += 1
             
         else:
             self.streak = 0
         
         self.is_waiting = True
+        
+        self.did += 1
             
         self.save_data()
         
@@ -214,8 +261,8 @@ class OpeningPuzzle(Game):
     def redo(self):
         self.is_waiting = False
         self.board = self.boards[self.needed-1].copy()
-        self.did += 1
         self.streak = 0
         
     def see_answ(self):
         self.board = self.boards[self.needed].copy()
+        
