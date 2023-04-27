@@ -125,19 +125,10 @@ class OpeningPuzzle(Game):
         base = self.get_boards(path)
         
         if len(base) == len(self.boards):
-            if self.is_turn == -1:
-                self.needed = random.choice(range(2, len(self.boards), 2))
+            self.needed = random.choice(range(int(2.5 + self.op_side/2), len(self.boards), 2))
                 
-            else:
-                self.needed = random.choice(range(1, len(self.boards), 2))
-                
-        else:
-            if self.is_turn == -1:
-                self.needed = random.choice(range(len(base)+1, len(self.boards), 2))
-                
-            else:
-                self.needed = random.choice(range(len(base), len(self.boards), 2))
-            
+        else: 
+            self.needed = random.choice(range(len(base)+1, len(self.boards), 2))
         
         self.board = self.boards[self.needed - 1].copy()
         
