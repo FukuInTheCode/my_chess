@@ -30,15 +30,20 @@ class Engine:
                     pyg.quit()
                     quit()
                     
-                if event.type == pyg.MOUSEBUTTONDOWN and pyg.mouse.get_pressed()[0]:
+                if event.type == pyg.MOUSEBUTTONDOWN:
                     
                     mou_x, mou_y = pyg.mouse.get_pos()
                     
                     if (0 <= mou_x <= self.game_type.w) and (0<= mou_y <= self.game_type.h):
-                        self.game_type.leftclick(mou_x, mou_y)
-                        
+                        if pyg.mouse.get_pressed()[0]:
+                            self.game_type.leftclick(mou_x, mou_y)
+                            
+                        elif pyg.mouse.get_pressed()[2]:
+                            self.game_type.rightclick(mou_x, mou_y)
+                            
                     else:
                         self.game_type.subgame(mou_x, mou_y)
+                        
                         
                 elif event.type == pyg.KEYDOWN and event.key == pyg.K_r:
                     self.game_type.rotate()
@@ -48,6 +53,6 @@ class Engine:
                     
                 elif event.type == pyg.KEYDOWN and event.key == pyg.K_RIGHT:
                     self.game_type.K_right()
- 
+
                     
             pyg.display.flip()

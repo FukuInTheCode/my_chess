@@ -1,6 +1,6 @@
 from board import Board
 import pygame as pyg
-from CONSTANT import BASE_BOARD_HEIGHT, BASE_BOARD_WIDTH
+from CONSTANT import BASE_BOARD_HEIGHT, BASE_BOARD_WIDTH, RED
 from pieces import *
 
 class Game:
@@ -10,6 +10,7 @@ class Game:
         self.clicked = None
         self.is_turn = 1
         self.buttons = []
+        self.highlights = []
         self.current = 0
         self.showed = 0
         self.init()
@@ -48,12 +49,15 @@ class Game:
             self.board.set_to(piece)
         
     def draw(self, scr) -> None:
-        self.board.draw(scr)
+        
+        self.board.draw(scr, self.highlights)
+        
         if self.clicked != None:
             self.clicked.draw_moves(scr, self.board)
             
         for btn in self.buttons:
             btn.draw(scr)
+
         
     def leftclick(self, mx:int, my:int) -> None:
         
@@ -112,6 +116,16 @@ class Game:
         self.showed += 1
         
         self.board = self.boards[self.showed].copy()
+        
+    def rightclick(self, mx: int, my: int) -> None:
+        mx = mx//self.board.sq_w
+        my = my//self.board.sq_h
+        
+        if (mx, my) not in self.highlights:
+            self.highlights.append((mx, my))
+            
+        else:
+            self.highlights.remove((mx, my))
     
         
 class Button():

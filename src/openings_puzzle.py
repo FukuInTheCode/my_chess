@@ -28,9 +28,9 @@ class OpeningPuzzle(Game):
         self.name = 'Puzzle Openings'
         
         self.buttons = [
-            Button(self.w*0.9, self.h//18 + self.h, self.h//42, (0, 255, 0), self.next),
-            Button(self.w*0.8, self.h//18 + self.h, self.h//42, (255, 0, 0), self.redo),
-            Button(self.w*0.7, self.h//18 + self.h, self.h//42, (255, 255, 0), self.see_answ)
+            Button(self.w*0.9, self.h//18 + self.h, self.h//42, GREEN, self.next),
+            Button(self.w*0.8, self.h//18 + self.h, self.h//42, RED, self.redo),
+            Button(self.w*0.7, self.h//18 + self.h, self.h//42, YELLOW, self.see_answ)
         ]
         
         self.streak = 0

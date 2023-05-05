@@ -1,5 +1,5 @@
 import pygame as pyg
-from CONSTANT import BLACK_SQUARE_COLOR, WHITE_SQUARE_COLOR
+from CONSTANT import BLACK_SQUARE_COLOR, WHITE_SQUARE_COLOR, RED
 from pieces import Queen
 
 class Board:
@@ -107,14 +107,14 @@ class Board:
         
         return False
     
-    def draw(self, scr) -> None:
+    def draw(self, scr, hlight) -> None:
         
         for i in range(self.h):
             for j in range(self.w):
                 
-                color = BLACK_SQUARE_COLOR if (i+j)%2 == 0 else WHITE_SQUARE_COLOR
+                color = RED if (j, i) in hlight else BLACK_SQUARE_COLOR if (i+j)%2 == 0 else WHITE_SQUARE_COLOR
                 
-                pyg.draw.rect(scr, color, (j*self.sq_w, i*self.sq_h, self.sq_w, self.sq_w))
+                pyg.draw.rect(scr, color, (j*self.sq_w, i*self.sq_h, self.sq_w, self.sq_h))
           
         if self.last_moved is not None:      
             self.last_moved.draw_last(scr, self.sq_w, self.sq_h)
