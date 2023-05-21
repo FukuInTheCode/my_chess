@@ -266,3 +266,11 @@ class OpeningPuzzle(Game):
     def see_answ(self):
         self.board = self.boards[self.needed].copy()
         
+    def K_right(self):
+        
+        if (self.showed == self.current and not self.is_waiting) or self.showed == len(self.boards)-1:
+            return
+        
+        self.showed += 1
+        
+        self.board = self.boards[self.showed].copy()

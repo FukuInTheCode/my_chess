@@ -16,6 +16,7 @@ class Game:
         self.init()
         
     def init(self):
+        self.highlights = []
         self.boards = []
         self.board = Board(BASE_BOARD_WIDTH, BASE_BOARD_HEIGHT, self.w, self.h)
         for i in range(1, 9):
@@ -104,6 +105,8 @@ class Game:
     def K_left(self):
         if self.showed == 0:
             return
+        
+        self.clicked = None
         
         self.showed -= 1
         
